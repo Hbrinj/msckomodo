@@ -264,6 +264,7 @@ config.status:873: creating Makefile
 config.status:873: creating src/Makefile
 config.status:873: creating src/Pixmaps/Makefile
 config.status:873: creating config.h
+config.status:1054: config.h is unchanged
 config.status:1102: executing depfiles commands
 
 ## ---------------- ##
@@ -457,7 +458,7 @@ target_vendor='pc'
 #define STDC_HEADERS 1
 #define VERBOSE_D 0
 #define SERIAL_DEBUG 0
-#define DATE "16/02/2017"
+#define DATE "21/02/2017"
 #define YEAR "2017"
 #define LINUX 1
 

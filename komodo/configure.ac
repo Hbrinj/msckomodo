@@ -19,7 +19,7 @@ AC_ARG_ENABLE(emulator,         [  --enable-emulator=emulator   Choose emulator 
 AC_ARG_ENABLE(setup-dir,        [  --enable-setup-dir=path      Choose directory of the setup files[~]], AC_DEFINE_UNQUOTED(SETUP_DIR,"$enableval"))
 AC_ARG_ENABLE(internal-setup,   [  --enable-internal-setup      By default use the .komodo file compiled in], AC_DEFINE(USE_INTERNAL,1)) 
 AC_ARG_ENABLE(simple-interface, [  --enable-simple-interface    Make a simple interface], AC_DEFINE(SIMPLE_INTERFACE,1))
-AC_ARG_ENABLE(gtk2,             [  --enable-gtk2                Compile with GTK+ 2.0], GTK2=1, GTK2=0)
+AC_ARG_ENABLE(gtk2,             [  --enable-gtk2                Compile with GTK+ 2.0], GTK2=1, GTK1=0)
 AC_ARG_ENABLE(static,           [  --enable-static              Compile statically], LDFLAGS=-static) 
 AC_ARG_ENABLE(wall,             [  --enable-wall                Compile giving all warnings], CFLAGS="-Wall") 
 
