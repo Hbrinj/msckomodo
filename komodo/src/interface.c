@@ -262,7 +262,7 @@ int offset;
         exit(1);         //   @@@
         }
       }
-      while (g_strcasecmp(ScangetStringAdvance(&cpulist), name) != 0);
+      while (g_ascii_strncasecmp(ScangetStringAdvance(&cpulist), name, strlen(name)) != 0);
 
     if (VERBOSE) g_print("ISA definition  : %s\n", name);
                                             /* declare the match for ISA def. */
@@ -307,7 +307,7 @@ int offset;
 
     backend->pArray_F[count].type = UNKNOWN;               /* Default setting */
 
-    if (!g_strcasecmp("xilinx-fpga", name))
+    if (!g_ascii_strncasecmp("xilinx-fpga", name, strlen(name)))
       {                          /* if name=xilinx-fpga set some trivial data */
       feature_IDed = TRUE;
       flag = TRUE;                 /* "flag" says if a feature was identified */
@@ -316,7 +316,7 @@ int offset;
                       = ScanfindSymbolString(cpulist, "XFPGA-filestring", "");
       }
     else
-      if (!g_strcasecmp("terminal", name))
+      if (!g_ascii_strncasecmp("terminal", name, strlen(name)))
         {                          /* if name==terminal set some trivial data */
         feature_IDed = TRUE;
         flag = TRUE;
@@ -1212,7 +1212,7 @@ while ((argv[count] != NULL) && (error == 0))       /* while arguments remain */
     {
     comp = 0;                           /* initiliase commandstring[] pointer */
     while ((commandstrings[comp] != NULL)
-         && g_strcasecmp(commandstrings[comp], argv[count]))
+         && g_ascii_strncasecmp(commandstrings[comp], argv[count],strlen(argv[count])))
       comp++;       /* step through list until parameter matches or list ends */
 
     switch (comp)                                 /* analyze the match is any */
