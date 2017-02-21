@@ -11,6 +11,7 @@
 #define INTERFACE_H
 #define KNOWN_CPUS 1
 #include <gdk/gdkx.h>
+#include <gdk-pixbuf/gdk-pixbuf.h>
 #include <gtk/gtk.h>
 #include <stdio.h>
 #include "chump.h"
@@ -145,8 +146,8 @@ struct special_reg_name
   unsigned char *value;                                    /* offset of value */
   GdkColor       colour;
   char         **pixmap_data;
-  GdkPixmap     *pixmap;
-  GdkBitmap     *bitmap;
+  GdkPixbuf     *pixmap;
+  GdkPixbuf     *bitmap;
   boolean        active;                               /* if activated or not */
   int           *valid;
 };                                                   /* flags use 1 char each */

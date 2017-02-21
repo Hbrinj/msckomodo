@@ -205,20 +205,20 @@ gpointer view_console;           /* Pointer to the text in the string console */
 gpointer view_comms;
 
 /* Definitions of pixmaps */
-GdkPixmap *view_chump_pixmap;
-GdkBitmap *view_chump_bitmap;
-GdkPixmap *view_tick_pixmap;
-GdkBitmap *view_tick_bitmap;
-GdkPixmap *view_mulogo_pixmap;
-GdkBitmap *view_mulogo_bitmap;
-GdkPixmap *view_komodologo_pixmap;
-GdkBitmap *view_komodologo_bitmap;
-GdkPixmap *view_komodotitle_pixmap;
-GdkBitmap *view_komodotitle_bitmap;
-GdkPixmap *view_komodoicon_pixmap;
-GdkBitmap *view_komodoicon_bitmap;
-GdkPixmap *view_komodominiicon_pixmap;
-GdkBitmap *view_komodominiicon_bitmap;
+GdkPixbuf *view_chump_pixmap;
+GdkPixbuf *view_chump_bitmap;
+GdkPixbuf *view_tick_pixmap;
+GdkPixbuf *view_tick_bitmap;
+GdkPixbuf *view_mulogo_pixmap;
+GdkPixbuf *view_mulogo_bitmap;
+GdkPixbuf *view_komodologo_pixmap;
+GdkPixbuf *view_komodologo_bitmap;
+GdkPixbuf *view_komodotitle_pixmap;
+GdkPixbuf *view_komodotitle_bitmap;
+GdkPixbuf *view_komodoicon_pixmap;
+GdkPixbuf *view_komodoicon_bitmap;
+GdkPixbuf *view_komodominiicon_pixmap;
+GdkPixbuf *view_komodominiicon_bitmap;
 
 GtkTooltips *view_tooltips;  /* one to hold the tooltips of all items in turn */
 
