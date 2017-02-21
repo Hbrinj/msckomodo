@@ -1,0 +1,11 @@
+KMD
+00000000: E59F0004    ;         LDR     R0, hello
+00000004: EF000003    ;         SWI     3
+00000008: EF000002    ;         SWI     2
+0000000C: 68 65 6C 6C ; hello   DEFB    "hello world"
+00000010: 6F 20 77 6F ; 
+00000014: 72 6C 64    ; 
+00000017:             ; 
+
+Symbol Table: Labels
+: hello                             0000000C  Local -- ARM

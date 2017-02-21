@@ -215,7 +215,7 @@ CC = @CC@
 CCDEPMODE = @CCDEPMODE@
 CFLAGS = @CFLAGS@
 CPP = @CPP@
-CPPFLAGS = @CPPFLAGS@
+CPPFLAGS = "-DGTK_ENABLE_BROKEN $CPPFLAGS"
 CYGPATH_W = @CYGPATH_W@
 DEFS = @DEFS@
 DEPDIR = @DEPDIR@
@@ -781,7 +781,6 @@ uninstall-am:
 	uninstall-am
 
 .PRECIOUS: Makefile
-
 
 #install-data-local:
 #	@$(NORMAL_INSTALL)

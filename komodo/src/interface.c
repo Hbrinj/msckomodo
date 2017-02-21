@@ -39,7 +39,7 @@
 
 char *dotkomodo =                // This is very dirty
 #include "dotkomodo.string"
- ;
+;
 
 #ifndef SETUP_DIR
 #define SETUP_DIR g_get_home_dir()
@@ -1355,13 +1355,13 @@ fixed_font = NULL;	// Hack for LJ (31/3/05)	@@@@
   fixed_style = gtk_widget_get_default_style();
   fixed_style = gtk_style_copy(fixed_style);
 
-  #ifdef GTK2
+  //#ifdef GTK2
   gtk_style_set_font(fixed_style, fixed_font);
-  #endif
+  //#endif
 
-  #ifndef GTK2
-  fixed_style->font = fixed_font;               /* create style with new font */
-  #endif
+  //#ifndef GTK2
+  //fixed_style->font = fixed_font;               /* create style with new font */
+  //#endif
   }
 
   /*** *** *** *** *** *** *** *** *** *** *** *** *** *** *** *** *** ***/

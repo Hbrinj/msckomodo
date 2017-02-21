@@ -954,7 +954,7 @@ m4trace:configure.ac:4: -1- m4_pattern_allow([^target$])
 m4trace:configure.ac:4: -1- m4_pattern_allow([^target_cpu$])
 m4trace:configure.ac:4: -1- m4_pattern_allow([^target_vendor$])
 m4trace:configure.ac:4: -1- m4_pattern_allow([^target_os$])
-m4trace:configure.ac:5: -1- AM_INIT_AUTOMAKE([KMD], [1.5.0])
+m4trace:configure.ac:5: -1- AM_INIT_AUTOMAKE
 m4trace:configure.ac:5: -1- m4_pattern_allow([^AM_[A-Z]+FLAGS$])
 m4trace:configure.ac:5: -1- AM_SET_CURRENT_AUTOMAKE_VERSION
 m4trace:configure.ac:5: -1- AM_AUTOMAKE_VERSION([1.15])
@@ -965,8 +965,7 @@ m4trace:configure.ac:5: -1- m4_pattern_allow([^INSTALL_DATA$])
 m4trace:configure.ac:5: -1- m4_pattern_allow([^am__isrc$])
 m4trace:configure.ac:5: -1- _AM_SUBST_NOTMAKE([am__isrc])
 m4trace:configure.ac:5: -1- m4_pattern_allow([^CYGPATH_W$])
-m4trace:configure.ac:5: -1- _m4_warn([obsolete], [AM_INIT_AUTOMAKE: two- and three-arguments forms are deprecated.], [/usr/share/aclocal-1.15/init.m4:29: AM_INIT_AUTOMAKE is expanded from...
-configure.ac:5: the top level])
+m4trace:configure.ac:5: -1- _AM_SET_OPTIONS([])
 m4trace:configure.ac:5: -1- m4_pattern_allow([^PACKAGE$])
 m4trace:configure.ac:5: -1- m4_pattern_allow([^VERSION$])
 m4trace:configure.ac:5: -1- _AM_IF_OPTION([no-define], [], [AC_DEFINE_UNQUOTED([PACKAGE], ["$PACKAGE"], [Name of package])
@@ -1139,25 +1138,25 @@ m4trace:configure.ac:29: -1- PKG_CHECK_EXISTS([glib-2.0 >= 2.5.0], [pkg_cv_[]GLI
 m4trace:configure.ac:29: -1- PKG_CHECK_EXISTS([glib-2.0 >= 2.5.0], [pkg_cv_[]GLIB_LIBS=`$PKG_CONFIG --[]libs "glib-2.0 >= 2.5.0" 2>/dev/null`
 		      test "x$?" != "x0" && pkg_failed=yes ], [pkg_failed=yes])
 m4trace:configure.ac:29: -1- _PKG_SHORT_ERRORS_SUPPORTED
-m4trace:configure.ac:30: -1- PKG_CHECK_MODULES([GTK], [gtk+-3.0])
+m4trace:configure.ac:30: -1- PKG_CHECK_MODULES([GTK], [gtk+-2.0])
 m4trace:configure.ac:30: -1- m4_pattern_allow([^GTK_CFLAGS$])
 m4trace:configure.ac:30: -1- m4_pattern_allow([^GTK_LIBS$])
-m4trace:configure.ac:30: -1- PKG_CHECK_EXISTS([gtk+-3.0], [pkg_cv_[]GTK_CFLAGS=`$PKG_CONFIG --[]cflags "gtk+-3.0" 2>/dev/null`
+m4trace:configure.ac:30: -1- PKG_CHECK_EXISTS([gtk+-2.0], [pkg_cv_[]GTK_CFLAGS=`$PKG_CONFIG --[]cflags "gtk+-2.0" 2>/dev/null`
 		      test "x$?" != "x0" && pkg_failed=yes ], [pkg_failed=yes])
-m4trace:configure.ac:30: -1- PKG_CHECK_EXISTS([gtk+-3.0], [pkg_cv_[]GTK_LIBS=`$PKG_CONFIG --[]libs "gtk+-3.0" 2>/dev/null`
+m4trace:configure.ac:30: -1- PKG_CHECK_EXISTS([gtk+-2.0], [pkg_cv_[]GTK_LIBS=`$PKG_CONFIG --[]libs "gtk+-2.0" 2>/dev/null`
 		      test "x$?" != "x0" && pkg_failed=yes ], [pkg_failed=yes])
 m4trace:configure.ac:30: -1- _PKG_SHORT_ERRORS_SUPPORTED
-m4trace:configure.ac:42: -1- m4_pattern_allow([^LINUX$])
+m4trace:configure.ac:41: -1- m4_pattern_allow([^LINUX$])
+m4trace:configure.ac:42: -1- m4_pattern_allow([^SUNOS$])
 m4trace:configure.ac:43: -1- m4_pattern_allow([^SUNOS$])
-m4trace:configure.ac:44: -1- m4_pattern_allow([^SUNOS$])
-m4trace:configure.ac:47: -1- _m4_warn([obsolete], [AC_OUTPUT should be used without arguments.
+m4trace:configure.ac:46: -1- _m4_warn([obsolete], [AC_OUTPUT should be used without arguments.
 You should run autoupdate.], [])
-m4trace:configure.ac:47: -1- m4_pattern_allow([^LIB@&t@OBJS$])
-m4trace:configure.ac:47: -1- m4_pattern_allow([^LTLIBOBJS$])
-m4trace:configure.ac:47: -1- AM_CONDITIONAL([am__EXEEXT], [test -n "$EXEEXT"])
-m4trace:configure.ac:47: -1- m4_pattern_allow([^am__EXEEXT_TRUE$])
-m4trace:configure.ac:47: -1- m4_pattern_allow([^am__EXEEXT_FALSE$])
-m4trace:configure.ac:47: -1- _AM_SUBST_NOTMAKE([am__EXEEXT_TRUE])
-m4trace:configure.ac:47: -1- _AM_SUBST_NOTMAKE([am__EXEEXT_FALSE])
-m4trace:configure.ac:47: -1- _AC_AM_CONFIG_HEADER_HOOK(["$ac_file"])
-m4trace:configure.ac:47: -1- _AM_OUTPUT_DEPENDENCY_COMMANDS
+m4trace:configure.ac:46: -1- m4_pattern_allow([^LIB@&t@OBJS$])
+m4trace:configure.ac:46: -1- m4_pattern_allow([^LTLIBOBJS$])
+m4trace:configure.ac:46: -1- AM_CONDITIONAL([am__EXEEXT], [test -n "$EXEEXT"])
+m4trace:configure.ac:46: -1- m4_pattern_allow([^am__EXEEXT_TRUE$])
+m4trace:configure.ac:46: -1- m4_pattern_allow([^am__EXEEXT_FALSE$])
+m4trace:configure.ac:46: -1- _AM_SUBST_NOTMAKE([am__EXEEXT_TRUE])
+m4trace:configure.ac:46: -1- _AM_SUBST_NOTMAKE([am__EXEEXT_FALSE])
+m4trace:configure.ac:46: -1- _AC_AM_CONFIG_HEADER_HOOK(["$ac_file"])
+m4trace:configure.ac:46: -1- _AM_OUTPUT_DEPENDENCY_COMMANDS

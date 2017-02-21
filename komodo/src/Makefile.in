@@ -321,7 +321,8 @@ top_build_prefix = @top_build_prefix@
 top_builddir = @top_builddir@
 top_srcdir = @top_srcdir@
 SUBDIRS = Pixmaps
-INCLUDES = @GTK_CFLAGS@
+AM_CPPFLAGS = @GTK_CFLAGS@
+AM_LDFLAGS = -lm
 kmd_SOURCES = \
 	interface.c interface.h\
 	callbacks.c callbacks.h\
@@ -750,7 +751,7 @@ uninstall-am: uninstall-binPROGRAMS
 
 
 dotkomodo.string: sample.komodo
-	parse.pl < sample.komodo > dotkomodo.string 
+	./parse.pl < sample.komodo > dotkomodo.string 
 
 # Tell versions [3.59,3.63) of GNU make to not export all variables.
 # Otherwise a system limit (for SysV at least) may be exceeded.

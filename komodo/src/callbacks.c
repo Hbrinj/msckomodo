@@ -2819,13 +2819,13 @@ int got;
 if (TRACE > 5) g_print("callback_console_update\n");
 
 got = read(compile_communication[0], getbuff, 20);
-#ifndef GTK2
+//#ifndef GTK2
 gtk_text_insert(GTK_TEXT(view_console), NULL, NULL, NULL, getbuff, got);
-#endif
+//#endif
 
-#ifdef GTK2
-gtk_text_buffer_insert_at_cursor(GTK_TEXT_BUFFER(view_console), getbuff, got);
-#endif
+//#ifdef GTK2
+//gtk_text_buffer_insert_at_cursor(GTK_TEXT_BUFFER(view_console), getbuff, got);
+//#endif
 return 1;
 }
 

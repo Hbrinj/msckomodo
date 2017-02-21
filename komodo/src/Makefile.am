@@ -3,7 +3,9 @@
 
 SUBDIRS = Pixmaps
 
-INCLUDES = @GTK_CFLAGS@
+AM_CPPFLAGS = @GTK_CFLAGS@
+
+AM_LDFLAGS = -lm
 
 bin_PROGRAMS = kmd flash jimulator
 
@@ -37,4 +39,4 @@ jimulator_LDADD =
 EXTRA_DIST = sample.komodo parse.pl
 
 dotkomodo.string: sample.komodo
-	parse.pl < sample.komodo > dotkomodo.string 
+	./parse.pl < sample.komodo > dotkomodo.string 

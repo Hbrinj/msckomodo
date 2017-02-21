@@ -1,7 +1,7 @@
 ## Process this file with automake to produce Makefile.in
 
 SUBDIRS = src
-
+CPPFLAGS = "-DGTK_ENABLE_BROKEN $CPPFLAGS"
 #install-data-local:
 #	@$(NORMAL_INSTALL)
 #	if test -d $(srcdir)/pixmaps; then \

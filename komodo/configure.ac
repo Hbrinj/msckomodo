@@ -1,10 +1,10 @@
 dnl Process this file with autoconf to produce a configure script.
 
-AC_INIT(configure.ac)
+AC_INIT([KMD], [1.6])
 AC_CANONICAL_SYSTEM
-AM_INIT_AUTOMAKE(KMD, 1.5.0)
+AM_INIT_AUTOMAKE
 AM_CONFIG_HEADER(config.h) 
-
+CFLAGS="-DGTK_ENABLE_BROKEN $CFLAGS" 
 dnl AC_ISC_POSIX
 AC_PROG_CC
 AM_PROG_CC_STDC
@@ -27,7 +27,7 @@ AC_DEFINE_UNQUOTED(DATE,"$(date +%d/%m/%Y)")
 AC_DEFINE_UNQUOTED(YEAR,"$(date +%Y)")
 
 PKG_CHECK_MODULES(GLIB, glib-2.0 >= 2.5.0)
-PKG_CHECK_MODULES(GTK, gtk+-3.0)
+PKG_CHECK_MODULES(GTK, gtk+-2.0)
 dnl AM_PATH_GLIB_2_0(2.5.0)
     
 dnl AM_PATH_GTK_3_0(3.22.0) 
@@ -37,7 +37,6 @@ dnl AC_CHECK_LIB(iberty, xexit, ,
 dnl 	AC_MSG_ERROR(Cannot find IBERTY: Install Libiberty) )
 dnl AC_CHECK_LIB(bfd, bfd_init, , 
 dnl 	AC_MSG_ERROR(Cannot find BFD: Install Libbfd) )
-
 case $target_os in
     linux*) AC_DEFINE(LINUX) ;;
     solaris*) AC_DEFINE(SUNOS) ;;

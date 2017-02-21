@@ -332,7 +332,7 @@ GtkWidget *separator;      /* Never read so all separator handles dumped here */
   GtkWidget *handle;
 
   handle = gtk_menu_item_new_with_label(string);
-  gtk_menu_item_configure(GTK_MENU_ITEM(handle), 0, TRUE);      /* show arrow */
+  //gtk_menu_item_configure(GTK_MENU_ITEM(handle), 0, TRUE);      /* show arrow */
   gtk_widget_show(handle);
   gtk_menu_append(GTK_MENU(submenu), handle);
   gtk_menu_item_set_submenu(GTK_MENU_ITEM(handle), subsubmenu);
@@ -602,7 +602,7 @@ about = create_submenu_entry2(help_submenu, "About              ",
 hbox = new_box(FALSE, 2, HORIZONTAL); /* Container of menu entries themselves */
 
 menu_bar = gtk_menu_bar_new();                   /* Create menu bar `buttons' */
-gtk_menu_bar_set_shadow_type(GTK_MENU_BAR(menu_bar), GTK_SHADOW_ETCHED_IN);
+//gtk_menu_bar_set_shadow_type(GTK_MENU_BAR(menu_bar), GTK_SHADOW_ETCHED_IN);
 gtk_widget_ref(menu_bar);
 gtk_widget_show(menu_bar);
 
@@ -739,14 +739,14 @@ gtk_object_set_data(GTK_OBJECT(view_fileerror), "view_fileerror",
 gtk_window_set_title(GTK_WINDOW(view_fileerror), _("File load error"));
 
 
-#ifdef GTK2
+//#ifdef GTK2
   gtk_window_set_type_hint(GTK_WINDOW(view_fileerror),
                             GDK_WINDOW_TYPE_HINT_DIALOG);
-#endif
+//#endif
 
-#ifndef GTK2
-  GTK_WINDOW(view_fileerror)->type = GTK_WINDOW_DIALOG;
-#endif
+//#ifndef GTK2
+//  GTK_WINDOW(view_fileerror)->type = GTK_WINDOW_DIALOG;
+//#endif
 
 gtk_window_set_position(GTK_WINDOW(view_fileerror), GTK_WIN_POS_CENTER);
 gtk_window_set_policy(GTK_WINDOW(view_fileerror), FALSE, TRUE, TRUE);
