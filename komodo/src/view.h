@@ -220,7 +220,7 @@ GdkPixbuf *view_komodoicon_bitmap;
 GdkPixbuf *view_komodominiicon_pixmap;
 GdkPixbuf *view_komodominiicon_bitmap;
 
-GtkTooltips *view_tooltips;  /* one to hold the tooltips of all items in turn */
+GtkTooltip *view_tooltips;  /* one to hold the tooltips of all items in turn */
 
 // GtkWidget *console_entry; /* the entry within the console/terminal is now global */
 
