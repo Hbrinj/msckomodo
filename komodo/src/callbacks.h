@@ -67,7 +67,7 @@ void callback_step_number(GtkEditable*, gpointer);
 void callback_memwindow_length(mem_window*, gpointer);
 void callback_memwindow_length2(GtkMenuItem*, gpointer);
 void callback_memwindow_isa(GtkMenuItem*, gpointer);
-void callback_memwindow_size_allocate(GtkCList*, gpointer);
+void callback_memwindow_size_allocate(GtkTreeView*, gpointer);
 //void callback_memwindow_listsize(GtkEditable*, gpointer);
 void callback_memwindow_tabsize(GtkEditable*, gpointer);
 //void callback_memwindow_no(GtkMenuItem*, gpointer);
@@ -79,7 +79,7 @@ void callback_memwindow_address(GtkEditable*, gpointer);
 void callback_memwindow_hex(GtkEditable*, gpointer);
 void callback_memwindow_ascii(GtkEditable*, gpointer);
 void callback_memwindow_dis(GtkEditable*, gpointer);
-void callback_memwindow_clist(GtkCList*, gint, gint, GdkEventButton*, gpointer);
+void callback_memwindow_clist(GtkTreeView*, gint, gint, GdkEventButton*, gpointer);
                           /* called when user selects row from a memory frame */
 //void callback_memory_window_row_selected (GtkCList*, gint, gint,
 //                                          GdkEventButton*, gpointer);
@@ -99,7 +99,7 @@ void callback_memwindow_scroll_button_press(GtkWidget *widget,
 void callback_memwindow_scrollmove(GtkAdjustment*, gpointer);
 gboolean callback_memwindow_scrollrelease(GtkWidget*, gpointer, gpointer);
 void callback_regwindow_hex(GtkEditable*, gpointer);
-void callback_regwindow_clist(GtkCList*, gint, gint, GdkEventButton*, gpointer);
+void callback_regwindow_clist(GtkTreeView*, gint, gint, GdkEventButton*, gpointer);
 
 void callback_flag_pressed(GtkToggleButton*, gpointer);
 typedef void (*callback_flag_function) (GtkToggleButton*, gpointer);

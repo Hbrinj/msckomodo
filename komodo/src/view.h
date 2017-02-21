@@ -184,7 +184,7 @@ void        view_destroy_memorywindow(mem_window*);
 void        print_char_in_terminal(uchar, gpointer);
 void        display_status(char*);
 void        display_board_state(uchar);
-void        view_update_field(GtkCList*, int, int, char*);
+void        view_update_field(GtkTreeView*, int, int, char*);
 char       *view_dis(uchar *, uchar *, int, GList *);
 
 
