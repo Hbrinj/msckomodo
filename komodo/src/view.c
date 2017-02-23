@@ -147,87 +147,96 @@ GtkWidget *status_bar;
 
 
 if (TRACE > 5) g_print("view_create_mainwindow\n");
+GtkBuilder *builder;
+GtkWidget *window;
+builder = gtk_builder_new();
+gtk_builder_add_from_file(builder, "main_window.glade", NULL);
 
-view_tooltips = gtk_tooltips_new();
+window = GTK_WIDGET(gtk_builder_get_object(builder, "kmd_main_window"));
+gtk_builder_connect_signals(builder, NULL);
+g_object_unref(builder);
+gtk_widget_show(window);
 
-view_tick_pixmap =
-    gdk_pixmap_colormap_create_from_xpm_d(NULL, gdk_colormap_get_system(),
-                                           &view_tick_bitmap, NULL, tick_xpm);
-view_mulogo_pixmap =
-    gdk_pixmap_colormap_create_from_xpm_d(NULL, gdk_colormap_get_system(),
-                                           &view_mulogo_bitmap, NULL,
-                                           mulogo_xpm);
-view_komodotitle_pixmap =
-    gdk_pixmap_colormap_create_from_xpm_d(NULL, gdk_colormap_get_system(),
-                                           &view_komodotitle_bitmap, NULL,
-                                           komodotitle_xpm);
-view_komodoicon_pixmap =
-    gdk_pixmap_colormap_create_from_xpm_d(NULL, gdk_colormap_get_system(),
-                                           &view_komodoicon_bitmap, NULL,
-                                           komodoicon_xpm);
-view_chump_pixmap =
-    gdk_pixmap_colormap_create_from_xpm_d(NULL, gdk_colormap_get_system(),
-                                           &view_chump_bitmap, NULL,
-                                           chump_xpm);
-view_komodominiicon_pixmap =
-    gdk_pixmap_colormap_create_from_xpm_d(NULL, gdk_colormap_get_system(),
-                                           &view_komodominiicon_bitmap, NULL,
-                                           komodominiicon_xpm);
-
-//   hints.base_width  = 990;
-//   hints.base_height = 700;
-//   hints.max_height  = 700;
-//   hints.max_width   = 990;
-//   hints.min_width   = 990;
-//   hints.min_height  = 700;
-
-view_mainwindow = gtk_window_new(GTK_WINDOW_TOPLEVEL);         /* Make window */
-gtk_window_set_title(GTK_WINDOW(view_mainwindow),
-                     PACKAGE " " VERSION " " DATE
-                     " (C) Manchester University");
-gtk_container_set_border_width(GTK_CONTAINER(view_mainwindow), 2);
-// [JNZ] gtk_window_set_default_size(GTK_WINDOW(view_mainwindow), 980, 500);
-// [JNZ] gtk_window_set_position(GTK_WINDOW(view_mainwindow), GTK_WIN_POS_CENTER);
-
-//   gtk_window_set_geometry_hints(GTK_WINDOW(view_mainwindow),
-//   GTK_WIDGET(view_mainwindow),
-//   &hints,
-//   GDK_HINT_MAX_SIZE|GDK_HINT_MIN_SIZE|GDK_HINT_BASE_SIZE);
-
-gtk_signal_connect(GTK_OBJECT(view_mainwindow), "destroy",  /* quit if closed */
-                   GTK_SIGNAL_FUNC(callback_main_quit), NULL);
-gtk_window_set_policy(GTK_WINDOW(view_mainwindow), FALSE, TRUE, FALSE);
-
-view_maincontainer = new_box(FALSE, 3, VERTICAL);
-gtk_container_add(GTK_CONTAINER(view_mainwindow), view_maincontainer);
-
-window_about   = view_create_aboutwindow();         /* Create an about window */
-window_feature = view_create_featurewindow();     /* Create a features window */
-filebar        = view_create_filebar();
-prog_ctrl      = view_create_prog_ctrl();
-menubar        = view_create_menubar();           /* Depends on the foregoing */
-status_bar     = view_create_status_bar();
-
-top_strip = new_box(FALSE, 3, HORIZONTAL); /* Make a strip for menu & buttons */
-gtk_container_set_border_width(GTK_CONTAINER(top_strip), 3);
-
-gtk_box_pack_start(GTK_BOX(view_maincontainer), menubar,   FALSE, FALSE, 0);
-gtk_box_pack_start(GTK_BOX(view_maincontainer), top_strip, FALSE, FALSE, 0);
-gtk_box_pack_start(GTK_BOX(top_strip), prog_ctrl, TRUE, TRUE, 0);
-                                               /* add the program control bar */
-gtk_box_pack_start(GTK_BOX(top_strip), filebar, TRUE, TRUE, 0);
-                                                          /* add the file bar */
-//  [JNZ `packs' status bar here] @@@
-
-
-window_body = view_parse_list();  /* Fill main area as specified by ".komodo" */
-
-gtk_widget_set_usize(window_body, MAIN_AREA_X, MAIN_AREA_Y);/* Size main area */
-
-// [JNZ]  gtk_box_pack_start(GTK_BOX(view_maincontainer), window_body, FALSE, FALSE, 0);
-gtk_box_pack_start(GTK_BOX(view_maincontainer), window_body, TRUE, TRUE, 0);
-
-gtk_box_pack_end(GTK_BOX(view_maincontainer), status_bar, FALSE, FALSE, 0);
+//view_tooltips = gtk_tooltips_new();
+//
+//view_tick_pixmap =
+//    gdk_pixmap_colormap_create_from_xpm_d(NULL, gdk_colormap_get_system(),
+//                                           &view_tick_bitmap, NULL, tick_xpm);
+//view_mulogo_pixmap =
+//    gdk_pixmap_colormap_create_from_xpm_d(NULL, gdk_colormap_get_system(),
+//                                           &view_mulogo_bitmap, NULL,
+//                                           mulogo_xpm);
+//view_komodotitle_pixmap =
+//    gdk_pixmap_colormap_create_from_xpm_d(NULL, gdk_colormap_get_system(),
+//                                           &view_komodotitle_bitmap, NULL,
+//                                           komodotitle_xpm);
+//view_komodoicon_pixmap =
+//    gdk_pixmap_colormap_create_from_xpm_d(NULL, gdk_colormap_get_system(),
+//                                           &view_komodoicon_bitmap, NULL,
+//                                           komodoicon_xpm);
+//view_chump_pixmap =
+//    gdk_pixmap_colormap_create_from_xpm_d(NULL, gdk_colormap_get_system(),
+//                                           &view_chump_bitmap, NULL,
+//                                           chump_xpm);
+//view_komodominiicon_pixmap =
+//    gdk_pixmap_colormap_create_from_xpm_d(NULL, gdk_colormap_get_system(),
+//                                           &view_komodominiicon_bitmap, NULL,
+//                                           komodominiicon_xpm);
+//
+////   hints.base_width  = 990;
+////   hints.base_height = 700;
+////   hints.max_height  = 700;
+////   hints.max_width   = 990;
+////   hints.min_width   = 990;
+////   hints.min_height  = 700;
+//
+//view_mainwindow = gtk_window_new(GTK_WINDOW_TOPLEVEL);         /* Make window */
+//gtk_window_set_title(GTK_WINDOW(view_mainwindow),
+//                     PACKAGE " " VERSION " " DATE
+//                     " (C) Manchester University");
+//gtk_container_set_border_width(GTK_CONTAINER(view_mainwindow), 2);
+//// [JNZ] gtk_window_set_default_size(GTK_WINDOW(view_mainwindow), 980, 500);
+//// [JNZ] gtk_window_set_position(GTK_WINDOW(view_mainwindow), GTK_WIN_POS_CENTER);
+//
+////   gtk_window_set_geometry_hints(GTK_WINDOW(view_mainwindow),
+////   GTK_WIDGET(view_mainwindow),
+////   &hints,
+////   GDK_HINT_MAX_SIZE|GDK_HINT_MIN_SIZE|GDK_HINT_BASE_SIZE);
+//
+//gtk_signal_connect(GTK_OBJECT(view_mainwindow), "destroy",  /* quit if closed */
+//                   GTK_SIGNAL_FUNC(callback_main_quit), NULL);
+//gtk_window_set_policy(GTK_WINDOW(view_mainwindow), FALSE, TRUE, FALSE);
+//
+//view_maincontainer = new_box(FALSE, 3, VERTICAL);
+//gtk_container_add(GTK_CONTAINER(view_mainwindow), view_maincontainer);
+//
+//window_about   = view_create_aboutwindow();         /* Create an about window */
+//window_feature = view_create_featurewindow();     /* Create a features window */
+//filebar        = view_create_filebar();
+//prog_ctrl      = view_create_prog_ctrl();
+//menubar        = view_create_menubar();           /* Depends on the foregoing */
+//status_bar     = view_create_status_bar();
+//
+//top_strip = new_box(FALSE, 3, HORIZONTAL); /* Make a strip for menu & buttons */
+//gtk_container_set_border_width(GTK_CONTAINER(top_strip), 3);
+//
+//gtk_box_pack_start(GTK_BOX(view_maincontainer), menubar,   FALSE, FALSE, 0);
+//gtk_box_pack_start(GTK_BOX(view_maincontainer), top_strip, FALSE, FALSE, 0);
+//gtk_box_pack_start(GTK_BOX(top_strip), prog_ctrl, TRUE, TRUE, 0);
+//                                               /* add the program control bar */
+//gtk_box_pack_start(GTK_BOX(top_strip), filebar, TRUE, TRUE, 0);
+//                                                          /* add the file bar */
+////  [JNZ `packs' status bar here] @@@
+//
+//
+//window_body = view_parse_list();  /* Fill main area as specified by ".komodo" */
+//
+//gtk_widget_set_usize(window_body, MAIN_AREA_X, MAIN_AREA_Y);/* Size main area */
+//
+//// [JNZ]  gtk_box_pack_start(GTK_BOX(view_maincontainer), window_body, FALSE, FALSE, 0);
+//gtk_box_pack_start(GTK_BOX(view_maincontainer), window_body, TRUE, TRUE, 0);
+//
+//gtk_box_pack_end(GTK_BOX(view_maincontainer), status_bar, FALSE, FALSE, 0);
                                                              /* Bar at bottom */
 
 return;
@@ -2598,7 +2607,7 @@ return frame;
 /* creates console window (the main one at the bottom)                        */
 /*                                                                            */
 
-#ifdef GTK2
+//#ifdef GTK2
 GtkWidget *view_create_console(void)             /* Create the console window */
 {
   GtkWidget *scrolledwindow;
@@ -2628,32 +2637,34 @@ if (TRACE > 5) g_print("view_create_console\n");
 
   return scrolledwindow;
 }
-#endif
+//#endif
 
-#ifndef GTK2
-GtkWidget *view_create_console(void)             /* Create the console window */
-{
-  GtkWidget *scrolledwindow;
-  GtkWidget *text;
 
-if (TRACE > 5) g_print("view_create_console\n");
+//#ifndef GTK2
+//GtkWidget *view_create_console(void)             /* Create the console window */
+//{
+//  GtkWidget *scrolledwindow;
+//  GtkWidget *text;
+//
+//if (TRACE > 5) g_print("view_create_console\n");
+//
+//  scrolledwindow = gtk_scrolled_window_new(NULL, NULL);
+//  gtk_widget_ref(scrolledwindow);
+//  gtk_widget_show (scrolledwindow);
+//  gtk_scrolled_window_set_policy (GTK_SCROLLED_WINDOW (scrolledwindow),
+//                                  GTK_POLICY_NEVER, GTK_POLICY_ALWAYS);
+//  text = gtk_text_new (NULL, NULL);
+//  gtk_text_set_word_wrap (GTK_TEXT (text), TRUE);
+//  gtk_text_set_editable (GTK_TEXT (text), FALSE);
+//  gtk_widget_set_style(text, fixed_style);
+//  gtk_widget_show (text);
+//  gtk_container_add (GTK_CONTAINER (scrolledwindow), text);
+//  gtk_text_insert(GTK_TEXT(text),NULL,NULL,NULL,"Komodo Console Window\n",-1);
+//  view_console = text;
+//  return scrolledwindow;
+//}
+//#endif
 
-  scrolledwindow = gtk_scrolled_window_new(NULL, NULL);
-  gtk_widget_ref(scrolledwindow);
-  gtk_widget_show (scrolledwindow);
-  gtk_scrolled_window_set_policy (GTK_SCROLLED_WINDOW (scrolledwindow),
-                                  GTK_POLICY_NEVER, GTK_POLICY_ALWAYS);
-  text = gtk_text_new (NULL, NULL);
-  gtk_text_set_word_wrap (GTK_TEXT (text), TRUE);
-  gtk_text_set_editable (GTK_TEXT (text), FALSE);
-  gtk_widget_set_style(text, fixed_style);
-  gtk_widget_show (text);
-  gtk_container_add (GTK_CONTAINER (scrolledwindow), text);
-  gtk_text_insert(GTK_TEXT(text),NULL,NULL,NULL,"Komodo Console Window\n",-1);
-  view_console = text;
-  return scrolledwindow;
-}
-#endif
 
 /*                                                                            */
 /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
