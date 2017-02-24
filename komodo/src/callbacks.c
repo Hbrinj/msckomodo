@@ -1380,7 +1380,7 @@ return;
 void callback_global_refresh(void)
 {
 if (TRACE > 3) g_print("callback_global_refresh\n");
-callback_refresh_selection(TRUE, TRUE, FALSE);
+//callback_refresh_selection(TRUE, TRUE, FALSE);
 return;
 }
 

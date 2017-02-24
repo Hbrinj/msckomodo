@@ -542,16 +542,16 @@ else
   // the GTK interface(sets its value) by calling display_board_state
   if (*steps_left != 0) string=g_strdup_printf("  Steps left: %u",*steps_left);
   else                  string=g_strdup_printf("  Total steps: %u",steps_total);
-  display_status(string);                     /* Update step count on display */
+  //display_status(string);                     /* Update step count on display */
   g_free(string);
 
-  display_board_state(client_status);
+  //display_board_state(client_status);
   switch (client_status & CLIENT_STATE_CLASS_MASK)       /* Class of activity */
     {
     case CLIENT_STATE_CLASS_RESET:                            /* Client reset */
       callback_global_refresh();                               /* refresh all */
-      breakpoint_refresh(0);           /* ONLY DO THIS IF UNEXPECTED (??) @@@ */
-      breakpoint_refresh(1);
+     // breakpoint_refresh(0);           /* ONLY DO THIS IF UNEXPECTED (??) @@@ */
+     // breakpoint_refresh(1);
       client_status = CLIENT_STATE_BROKEN;
       break;
 
@@ -1023,7 +1023,7 @@ int main(int argc, char *argv[])
 {
 GtkWidget *splashwindow;                              /* splash window handle */
 
-TRACE = 0;                                            /* JDG   bodged for now */
+TRACE = 100;                                            /* JDG   bodged for now */
 
 if (TRACE > 5) g_print("\nmain\n");
 
@@ -1087,9 +1087,9 @@ use_internal = USE_INTERNAL;
 switch (commandline(argc, argv))                     /* process the arguments */
   {
   case COMMANDLINE_CONTINUE:           break;
-  case COMMANDLINE_TERMINATE: exit(0); break;
-  case COMMANDLINE_ERROR:     exit(1); break;
-  default: fprintf(stderr, "Command parser failed\n"); exit(1); break;
+  //case COMMANDLINE_TERMINATE: exit(0); break;
+  //case COMMANDLINE_ERROR:     exit(1); break;
+  default: fprintf(stderr, "Command parser failed\n"); //exit(1); break;
   }
 
 gtk_init(&argc, &argv);                    /* Initialise GTK (user interface) */

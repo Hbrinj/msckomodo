@@ -129,6 +129,9 @@ GtkWidget *centry_compile;          /* the current file entry for compilation */
 //GtkWidget *centry_load;                 /* the current file entry for loading */
 
 
+//----------- START OF REVAMPED CODE-----------
+void connect_menubar_signals(GtkBuilder *);
+
 /******************************************************************************/
 /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 /* Creates the main KMD main window                                           */
@@ -148,14 +151,19 @@ GtkWidget *status_bar;
 
 if (TRACE > 5) g_print("view_create_mainwindow\n");
 GtkBuilder *builder;
-GtkWidget *window;
 builder = gtk_builder_new();
 gtk_builder_add_from_file(builder, "main_window.glade", NULL);
 
-window = GTK_WIDGET(gtk_builder_get_object(builder, "kmd_main_window"));
+view_mainwindow = GTK_WIDGET(gtk_builder_get_object(builder, "kmd_main_window"));
 gtk_builder_connect_signals(builder, NULL);
+
+connect_menubar_signals(builder);
+
+GtkWidget *quit = GTK_WIDGET(gtk_builder_get_object(builder, "kmd_main_menubar_file_quit"));
+g_signal_connect(quit, "activate", G_CALLBACK(callback_main_quit), NULL);
+
+
 g_object_unref(builder);
-gtk_widget_show(window);
 
 //view_tooltips = gtk_tooltips_new();
 //
@@ -241,6 +249,41 @@ gtk_widget_show(window);
 
 return;
 }
+//-------------------- REVAMPED CODE------------
+
+void connect_menubar_signals(GtkBuilder *builder)
+{
+    void connect_file_signals() {
+        GtkWidget *quit = GTK_WIDGET(gtk_builder_get_object(builder, "kmd_main_menubar_file_quit"));
+        GtkWidget *loadsource;
+        GtkWidget *loadkmd;
+
+        g_signal_connect(quit, "activate", G_CALLBACK(callback_main_quit), NULL);
+        
+        
+        return;
+    }
+
+    void connect_view_signals() {
+
+    }
+
+    void connect_help_signals() {
+
+    }
+
+    connect_file_signals();
+    connect_view_signals();
+    connect_help_signals();
+    
+    return;
+}
+
+//-------------------- END REVAMPED CODE --------
+
+
+
+
 
 /*                                                                            */
 /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
