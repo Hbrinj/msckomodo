@@ -2,6 +2,36 @@
 <interface>
   <requires lib="gtk+" version="2.24"/>
   <!-- interface-naming-policy project-wide -->
+  <object class="GtkAboutDialog" id="kmd_about_main">
+    <property name="can_focus">False</property>
+    <property name="border_width">5</property>
+    <property name="type_hint">dialog</property>
+    <property name="program_name">KoMoDo</property>
+    <property name="version">1.6</property>
+    <property name="comments" translatable="yes">some stuff here</property>
+    <child internal-child="vbox">
+      <object class="GtkVBox" id="dialog-vbox1">
+        <property name="visible">True</property>
+        <property name="can_focus">False</property>
+        <property name="spacing">2</property>
+        <child internal-child="action_area">
+          <object class="GtkHButtonBox" id="dialog-action_area1">
+            <property name="visible">True</property>
+            <property name="can_focus">False</property>
+            <property name="layout_style">end</property>
+          </object>
+          <packing>
+            <property name="expand">True</property>
+            <property name="fill">True</property>
+            <property name="position">0</property>
+          </packing>
+        </child>
+        <child>
+          <placeholder/>
+        </child>
+      </object>
+    </child>
+  </object>
   <object class="GtkImage" id="kmd_main_menubar_img_reload">
     <property name="visible">True</property>
     <property name="can_focus">False</property>
@@ -152,11 +182,47 @@
             <property name="can_focus">False</property>
             <property name="toolbar_style">icons</property>
             <child>
+              <object class="GtkToolButton" id="kmd_main_toolbar_open">
+                <property name="visible">True</property>
+                <property name="can_focus">False</property>
+                <property name="label" translatable="yes">open</property>
+                <property name="use_underline">True</property>
+                <property name="stock_id">gtk-open</property>
+              </object>
+              <packing>
+                <property name="expand">False</property>
+                <property name="homogeneous">True</property>
+              </packing>
+            </child>
+            <child>
+              <object class="GtkToolButton" id="kmd_main_toolbar_reload">
+                <property name="visible">True</property>
+                <property name="can_focus">False</property>
+                <property name="label" translatable="yes">reload</property>
+                <property name="use_underline">True</property>
+                <property name="stock_id">gtk-refresh</property>
+              </object>
+              <packing>
+                <property name="expand">False</property>
+                <property name="homogeneous">True</property>
+              </packing>
+            </child>
+            <child>
+              <object class="GtkSeparatorToolItem" id="toolbutton4">
+                <property name="visible">True</property>
+                <property name="can_focus">False</property>
+              </object>
+              <packing>
+                <property name="expand">False</property>
+                <property name="homogeneous">True</property>
+              </packing>
+            </child>
+            <child>
               <object class="GtkToolButton" id="kmd_main_toolbar_start">
                 <property name="visible">True</property>
                 <property name="can_focus">False</property>
                 <property name="tooltip_text" translatable="yes">Start running</property>
-                <property name="label" translatable="yes">toolbutton1</property>
+                <property name="label" translatable="yes">start</property>
                 <property name="use_underline">True</property>
                 <property name="stock_id">gtk-media-play</property>
               </object>
@@ -170,7 +236,7 @@
                 <property name="visible">True</property>
                 <property name="can_focus">False</property>
                 <property name="tooltip_text" translatable="yes">Stop running</property>
-                <property name="label" translatable="yes">toolbutton1</property>
+                <property name="label" translatable="yes">stop</property>
                 <property name="use_underline">True</property>
                 <property name="stock_id">gtk-media-stop</property>
               </object>
@@ -184,7 +250,7 @@
                 <property name="visible">True</property>
                 <property name="can_focus">False</property>
                 <property name="tooltip_text" translatable="yes">Pause running</property>
-                <property name="label" translatable="yes">toolbutton2</property>
+                <property name="label" translatable="yes">pause</property>
                 <property name="use_underline">True</property>
                 <property name="stock_id">gtk-media-pause</property>
               </object>
@@ -208,7 +274,7 @@
                 <property name="visible">True</property>
                 <property name="can_focus">False</property>
                 <property name="tooltip_text" translatable="yes">Single step</property>
-                <property name="label" translatable="yes">toolbutton4</property>
+                <property name="label" translatable="yes">single step</property>
                 <property name="use_underline">True</property>
                 <property name="stock_id">gtk-media-forward</property>
               </object>
@@ -222,7 +288,7 @@
                 <property name="visible">True</property>
                 <property name="can_focus">False</property>
                 <property name="tooltip_text" translatable="yes">Multistep</property>
-                <property name="label" translatable="yes">toolbutton5</property>
+                <property name="label" translatable="yes">multistep</property>
                 <property name="use_underline">True</property>
                 <property name="stock_id">gtk-media-next</property>
               </object>
@@ -263,11 +329,21 @@
               </packing>
             </child>
             <child>
+              <object class="GtkSeparatorToolItem" id="toolbutton5">
+                <property name="visible">True</property>
+                <property name="can_focus">False</property>
+              </object>
+              <packing>
+                <property name="expand">False</property>
+                <property name="homogeneous">True</property>
+              </packing>
+            </child>
+            <child>
               <object class="GtkToolButton" id="kmd_main_toolbar_walk">
                 <property name="visible">True</property>
                 <property name="can_focus">False</property>
                 <property name="tooltip_text" translatable="yes">Walk</property>
-                <property name="label" translatable="yes">toolbutton6</property>
+                <property name="label" translatable="yes">walk</property>
                 <property name="use_underline">True</property>
                 <property name="stock_id">gtk-go-forward</property>
               </object>
@@ -300,7 +376,7 @@
                 </child>
               </object>
               <packing>
-                <property name="expand">True</property>
+                <property name="expand">False</property>
                 <property name="homogeneous">True</property>
               </packing>
             </child>
