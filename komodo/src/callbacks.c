@@ -1367,9 +1367,9 @@ unsigned int dummy;
 
 if (TRACE > 3) g_print("callback_refresh_selection\n");
 
-if (registers) callback_register_refresh();
-if (memory)    callback_memory_refresh();
-if (status)    board_enq(&dummy);                    // over-heavy (?) @@@
+//if (registers) callback_register_refresh();
+//if (memory)    callback_memory_refresh();
+//if (status)    board_enq(&dummy);                    // over-heavy (?) @@@
 return;
 }
 
@@ -1380,7 +1380,7 @@ return;
 void callback_global_refresh(void)
 {
 if (TRACE > 3) g_print("callback_global_refresh\n");
-//callback_refresh_selection(TRUE, TRUE, FALSE);
+callback_refresh_selection(TRUE, TRUE, FALSE);
 return;
 }
 

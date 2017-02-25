@@ -42,6 +42,14 @@
     <property name="value">1</property>
     <property name="step_increment">1</property>
   </object>
+  <object class="GtkListStore" id="kmd_main_reg_model">
+    <columns>
+      <!-- column-name Register -->
+      <column type="gchararray"/>
+      <!-- column-name Value -->
+      <column type="gchararray"/>
+    </columns>
+  </object>
   <object class="GtkAdjustment" id="kmd_main_walk_adj">
     <property name="upper">1</property>
     <property name="step_increment">0.10000000000000001</property>
@@ -102,9 +110,6 @@
                         <property name="can_focus">False</property>
                         <property name="use_underline">True</property>
                         <property name="use_stock">True</property>
-                        <signal name="button-press-event" handler="callback_menu_quit" swapped="no"/>
-                        <signal name="activate" handler="callback_main_quit" swapped="no"/>
-                        <signal name="select" handler="callback_menu_quit" swapped="no"/>
                       </object>
                     </child>
                   </object>
@@ -396,7 +401,39 @@
                 <property name="visible">True</property>
                 <property name="can_focus">False</property>
                 <child>
-                  <placeholder/>
+                  <object class="GtkNotebook" id="kmd_main_notebook_reg">
+                    <property name="visible">True</property>
+                    <property name="can_focus">True</property>
+                    <property name="tab_pos">left</property>
+                    <property name="show_border">False</property>
+                    <property name="tab_border">1</property>
+                    <property name="tab_hborder">1</property>
+                    <property name="tab_vborder">1</property>
+                    <property name="homogeneous">True</property>
+                    <child>
+                      <placeholder/>
+                    </child>
+                    <child type="tab">
+                      <placeholder/>
+                    </child>
+                    <child>
+                      <placeholder/>
+                    </child>
+                    <child type="tab">
+                      <placeholder/>
+                    </child>
+                    <child>
+                      <placeholder/>
+                    </child>
+                    <child type="tab">
+                      <placeholder/>
+                    </child>
+                  </object>
+                  <packing>
+                    <property name="expand">True</property>
+                    <property name="fill">True</property>
+                    <property name="position">0</property>
+                  </packing>
                 </child>
                 <child>
                   <placeholder/>

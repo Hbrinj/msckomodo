@@ -60,6 +60,10 @@
 
 /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 
+typedef enum { COLUMN_REG, COLUMN_HEX, COLUMN_ASCII, N_COLUMN } reg_column_index;
+
+/* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+
 typedef enum { MEM_WIN_DUMP, MEM_WIN_SOURCE } mem_win_type;
 
 /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/

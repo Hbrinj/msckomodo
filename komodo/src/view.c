@@ -132,6 +132,8 @@ GtkWidget *centry_compile;          /* the current file entry for compilation */
 //----------- START OF REVAMPED CODE-----------
 void connect_menubar_signals(GtkBuilder *);
 
+void setup_reg_view(GtkBuilder *); 
+
 /******************************************************************************/
 /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 /* Creates the main KMD main window                                           */
@@ -158,10 +160,8 @@ view_mainwindow = GTK_WIDGET(gtk_builder_get_object(builder, "kmd_main_window"))
 gtk_builder_connect_signals(builder, NULL);
 
 connect_menubar_signals(builder);
-
-GtkWidget *quit = GTK_WIDGET(gtk_builder_get_object(builder, "kmd_main_menubar_file_quit"));
-g_signal_connect(quit, "activate", G_CALLBACK(callback_main_quit), NULL);
-
+setup_reg_view(builder);
+gtk_widget_show_all(view_mainwindow);
 
 g_object_unref(builder);
 
@@ -279,6 +279,32 @@ void connect_menubar_signals(GtkBuilder *builder)
     return;
 }
 
+void setup_reg_view(GtkBuilder *builder)
+{
+    GtkTreeViewColumn *reg_column, *hex_column, *ascii_column;
+    // grab a handle to the notebook
+    GtkWidget *notebook = GTK_WIDGET(gtk_builder_get_object(builder, "kmd_main_notebook_reg"));
+
+    // create our treeview model
+    GtkListStore *list = gtk_list_store_new(3, G_TYPE_STRING, G_TYPE_STRING, G_TYPE_STRING);
+
+    // create our treeview
+    GtkWidget *treeview = gtk_tree_view_new_with_model(GTK_TREE_MODEL(list));
+
+    //create a renderer that knows how to deal with text;
+    GtkCellRenderer *renderer = gtk_cell_renderer_text_new();
+
+    // Create the columns
+    reg_column = gtk_tree_view_column_new_with_attributes("Reg", renderer, "text", COLUMN_REG, NULL);
+    hex_column = gtk_tree_view_column_new_with_attributes("Hex", renderer, "text", COLUMN_HEX, NULL);
+    ascii_column = gtk_tree_view_column_new_with_attributes("Ascii", renderer, "text", COLUMN_ASCII, NULL);
+    gtk_tree_view_append_column(GTK_TREE_VIEW(treeview), reg_column);
+    gtk_tree_view_append_column(GTK_TREE_VIEW(treeview), hex_column);
+    gtk_tree_view_append_column(GTK_TREE_VIEW(treeview), ascii_column);
+
+    gtk_notebook_append_page(notebook, treeview, gtk_label_new("current"));
+
+}
 //-------------------- END REVAMPED CODE --------
 
 
