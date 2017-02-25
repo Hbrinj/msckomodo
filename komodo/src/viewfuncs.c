@@ -579,36 +579,33 @@ return ret;                /* one to indicate successful update of the memory */
 
 int view_updateregwindow(reg_window *regwindowptr)
 {
-GtkListStore *liststore;
-GtkTreeModel *treemodel;
-char *element[] = { "SPSR", "00000000", "????" };/* needed when omitting SPSR */
-reg_bank *regbank;
+    GtkListStore *liststore;
+    GtkTreeModel *treemodel;
+    char *element[] = { "SPSR", "00000000", "????" };/* needed when omitting SPSR */
+    reg_bank *regbank;
 
 /** * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /* Adds all the register to the column list on the screen                     */
 
-  void reg_ASCII(char *source, char *dest, int max)
-  {
-  int i;
-  char c;
-
-  for (i = 0; (i < regbank->width) && (i < max); i++)		// Limited @@@
+    void reg_ASCII(char *source, char *dest, int max)
     {
-    if ((source[i] >= ' ') && (source[i] <= '~')) dest[i] = source[i];
-    else                                          dest[i] = '.';
+        int i;
+        char c;
+
+        for (i = 0; (i < regbank->width) && (i < max); i++) {
+            if ((source[i] >= ' ') && (source[i] <= '~')) dest[i] = source[i];
+            else                                          dest[i] = '.';
+        }
+        dest[i] = '\0';                                        /* String terminator */
+        return;
     }
-  dest[i] = '\0';                                        /* String terminator */
-
-  return;
-  }
-
-    void update_reg_clist()
+    
+    void update_reg_treeview()
     {
-      int count;
-      GtkTreePath *path;
-      GtkTreeIter iter;
-      char *data0, *data1, data2[MAX_REG_SIZE+1];          /* "+1" for terminator */
-
+        int count;
+        GtkTreePath *path;
+        GtkTreeIter iter;
+        char *data0, *data1, data2[MAX_REG_SIZE+1];          /* "+1" for terminator */
         for (count = 0; count < regbank->number; count++) {    /* All registers in current bank */
             // grab a path object to point to the 'count' element
             path = gtk_tree_path_new_from_indices(count);
@@ -762,7 +759,7 @@ if (regwindowptr->regbank_no == gtk_notebook_get_current_page(register_notebook)
                    /* the current register bank being refreshed */
     g_print(regbank->name);
     g_print("\n");
-    update_reg_clist();
+    update_reg_treeview();
 
     if (strcmp(board->cpu_name, "ARM") == 0) /* Following only applies to ARM */
       display_or_omit_spsr_in_current(&regbank->values[CPSR * regbank->width]);

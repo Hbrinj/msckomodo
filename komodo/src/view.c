@@ -131,8 +131,10 @@ GtkWidget *centry_compile;          /* the current file entry for compilation */
 
 //----------- START OF REVAMPED CODE-----------
 void connect_menubar_signals(GtkBuilder *);
+void create_reg_view(GtkBuilder *);
+void connect_reg_view_signals();
+void setup_reg_view(GtkBuilder *);
 
-void setup_reg_view(GtkBuilder *); 
 
 /******************************************************************************/
 /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
@@ -160,7 +162,6 @@ view_mainwindow = GTK_WIDGET(gtk_builder_get_object(builder, "kmd_main_window"))
 gtk_builder_connect_signals(builder, NULL);
 
 connect_menubar_signals(builder);
-//view_parse_list();  /* Fill main area as specified by ".komodo" */
 setup_reg_view(builder);
 
 g_object_unref(builder);
@@ -279,12 +280,13 @@ void connect_menubar_signals(GtkBuilder *builder)
     return;
 }
 
-void setup_reg_view(GtkBuilder *builder)
+void create_reg_view(GtkBuilder *builder)
 {
     const target_system *_board = board;
 
     GtkListStore *temp_list;
     GtkWidget *temp_treeview;
+    GtkWidget *scrollview;
     GtkTreeViewColumn *reg_column, *hex_column, *ascii_column;
     reg_window *temp_regwindow;
     char *startdata[] = { "Reg", "Value (Hex)", "ASCII" };
@@ -331,10 +333,15 @@ void setup_reg_view(GtkBuilder *builder)
         gtk_tree_view_append_column(GTK_TREE_VIEW(temp_treeview), hex_column);
         gtk_tree_view_append_column(GTK_TREE_VIEW(temp_treeview), ascii_column);
 
+        //create the scroll view
+        scrollview = gtk_scrolled_window_new(NULL,NULL);
+        
+
         gtk_widget_show(GTK_WIDGET(temp_treeview));
+        gtk_container_add(GTK_CONTAINER(scrollview), temp_treeview);
+        gtk_widget_show(scrollview);
         // Add the page to the notebook
-        gint status = gtk_notebook_append_page(register_notebook,temp_treeview, gtk_label_new(regbank->name));
-        g_print("%d, appending pages\n", status);
+        gint status = gtk_notebook_append_page(register_notebook,scrollview, gtk_label_new(regbank->name));
 
         for(int j = 0; j < regbank->number; j++) {
             gtk_list_store_append(temp_list, &iter);
@@ -348,6 +355,20 @@ void setup_reg_view(GtkBuilder *builder)
         
     }
     gtk_widget_show(register_notebook);
+}
+
+void connect_reg_view_signals()
+{
+    g_signal_connect_after(register_notebook, "switch-page", G_CALLBACK(callback_reg_notebook_change), NULL);
+}
+
+/**
+ * Convenience function to setup the register view
+ */
+void setup_reg_view(GtkBuilder *builder)
+{
+    create_reg_view(builder);
+    connect_reg_view_signals();
 }
 //-------------------- END REVAMPED CODE --------
 
@@ -2632,78 +2653,78 @@ return frame;                  /* return the frame with the appropriate flags */
 //GtkWidget *temp_label;
 //
 //
-//if (TRACE > 5) g_print("view_create_register_clist\n");
-//
-//regwindow = g_new(reg_window, 1);              /* Allocate window data record */
-//regwindowlist = &view_regwindowlist;
-//
-//regwindow->regbank_no = regbanknumber;
-//while (NULL != *regwindowlist) regwindowlist = &((*regwindowlist)->next);
-//*regwindowlist = g_new(reg_window_entry, 1);    /* Allocate new list entry(?) */
-//(*regwindowlist)->reg_data_ptr = regwindow;   /* Add window to allocated list */
-//(*regwindowlist)->next = NULL;
-//
-//frame = gtk_frame_new(board->reg_banks[regwindow->regbank_no].name);
-//gtk_widget_ref(frame);         /* Create frame to keep everything in (??) @@@ */
-//gtk_widget_show(frame);
-//gtk_widget_set_usize(frame, REG_WIDGET_X, REG_WIDGET_Y);
-//
-//vbox = new_box(FALSE, 0, VERTICAL);
-//gtk_object_set_data(GTK_OBJECT(vbox), "reg_window", regwindow);
-//gtk_container_add(GTK_CONTAINER(frame), vbox);
-//
-//regwindow->wait  = 100;
-//regwindow->timer = 0;
-//
-//entry_strip = new_box(FALSE, 0, HORIZONTAL);/* Produce strip with entry boxes */
-//gtk_box_pack_start(GTK_BOX(vbox), entry_strip, FALSE, FALSE, 0);
-//
-//                                  /* Note similarities with "entry_box()" @@@ */
-//regwindow->address_entry = entry_box(entry_strip, REG_NAME_MAX_LEN,
-//                                                  REG_ADDR_COL_WIDTH + 8, NULL);
-//// "style" added implicitly @@@
-//
-//regwindow->hex_entry = entry_box(entry_strip, MAX_ADDRESS_OR_HEX_ENTRY,
-//                             board->reg_banks[regwindow->regbank_no].width
-//                           * REG_VALUE_CHAR_WIDTH + 16,
-//                             GTK_SIGNAL_FUNC(callback_regwindow_hex));
-//
-//							// ASCII entry box(?) @@@
-//
-//scrolledwindow = gtk_scrolled_window_new(NULL, NULL);           /* Main panel */
-//gtk_scrolled_window_set_policy(GTK_SCROLLED_WINDOW(scrolledwindow),
-//                               GTK_POLICY_NEVER, GTK_POLICY_AUTOMATIC);
-//gtk_widget_show(scrolledwindow);
-//gtk_box_pack_start(GTK_BOX(vbox), scrolledwindow, TRUE, TRUE, 0);
-//
-//if (board->reg_banks[regwindow->regbank_no].width > 0)
-//  regwindow->clist_ptr = gtk_clist_new(3);       /* Three displayable columns */
-//else
-//  regwindow->clist_ptr = gtk_clist_new(2);            /*  or only two columns */
-//
-//gtk_widget_set_style(regwindow->clist_ptr, fixed_style);
-//for (temp = 0; temp < (board->reg_banks[regwindow->regbank_no]).number; temp++)
-//  gtk_clist_append(GTK_CLIST(regwindow->clist_ptr), startdata);
-//gtk_clist_set_selection_mode(GTK_CLIST(regwindow->clist_ptr),
-//                             GTK_SELECTION_BROWSE);
-//
-//gtk_signal_connect(GTK_OBJECT(regwindow->clist_ptr), "select-row",
-//                   GTK_SIGNAL_FUNC(callback_regwindow_clist), NULL);
-//gtk_widget_show(regwindow->clist_ptr);
-//gtk_container_add(GTK_CONTAINER(scrolledwindow), regwindow->clist_ptr);
-//
-//if (board->reg_banks[regwindow->regbank_no].width > 0)
-//  gtk_clist_column_titles_show(GTK_CLIST(regwindow->clist_ptr));
-//                                /* Omit titles for width = 0 (bit display(?)) */
-//
-//temp_label = column_label(startdata[0], regwindow->clist_ptr, 0,
-//                          REG_ADDR_COL_WIDTH);
-//temp_label = column_label(startdata[1], regwindow->clist_ptr, 1,
-//                          board->reg_banks[regwindow->regbank_no].width
-//                        * REG_VALUE_CHAR_WIDTH + 8);
-//temp_label = column_label(startdata[2], regwindow->clist_ptr, 2, -1);
-//
-//view_updateregwindow(regwindow);
+    //if (TRACE > 5) g_print("view_create_register_clist\n");
+    //
+    //regwindow = g_new(reg_window, 1);              /* Allocate window data record */
+    //regwindowlist = &view_regwindowlist;
+    //
+    //regwindow->regbank_no = regbanknumber;
+    //while (NULL != *regwindowlist) regwindowlist = &((*regwindowlist)->next);
+    //*regwindowlist = g_new(reg_window_entry, 1);    /* Allocate new list entry(?) */
+    //(*regwindowlist)->reg_data_ptr = regwindow;   /* Add window to allocated list */
+    //(*regwindowlist)->next = NULL;
+    //
+    //frame = gtk_frame_new(board->reg_banks[regwindow->regbank_no].name);
+    //gtk_widget_ref(frame);         /* Create frame to keep everything in (??) @@@ */
+    //gtk_widget_show(frame);
+    //gtk_widget_set_usize(frame, REG_WIDGET_X, REG_WIDGET_Y);
+    //
+    //vbox = new_box(FALSE, 0, VERTICAL);
+    //gtk_object_set_data(GTK_OBJECT(vbox), "reg_window", regwindow);
+    //gtk_container_add(GTK_CONTAINER(frame), vbox);
+    //
+    //regwindow->wait  = 100;
+    //regwindow->timer = 0;
+    //
+    //entry_strip = new_box(FALSE, 0, HORIZONTAL);/* Produce strip with entry boxes */
+    //gtk_box_pack_start(GTK_BOX(vbox), entry_strip, FALSE, FALSE, 0);
+    //
+    //                                  /* Note similarities with "entry_box()" @@@ */
+    //regwindow->address_entry = entry_box(entry_strip, REG_NAME_MAX_LEN,
+    //                                                  REG_ADDR_COL_WIDTH + 8, NULL);
+    //// "style" added implicitly @@@
+    //
+    //regwindow->hex_entry = entry_box(entry_strip, MAX_ADDRESS_OR_HEX_ENTRY,
+    //                             board->reg_banks[regwindow->regbank_no].width
+    //                           * REG_VALUE_CHAR_WIDTH + 16,
+    //                             GTK_SIGNAL_FUNC(callback_regwindow_hex));
+    //
+    //							// ASCII entry box(?) @@@
+    //
+    //scrolledwindow = gtk_scrolled_window_new(NULL, NULL);           /* Main panel */
+    //gtk_scrolled_window_set_policy(GTK_SCROLLED_WINDOW(scrolledwindow),
+    //                               GTK_POLICY_NEVER, GTK_POLICY_AUTOMATIC);
+    //gtk_widget_show(scrolledwindow);
+    //gtk_box_pack_start(GTK_BOX(vbox), scrolledwindow, TRUE, TRUE, 0);
+    //
+    //if (board->reg_banks[regwindow->regbank_no].width > 0)
+    //  regwindow->clist_ptr = gtk_clist_new(3);       /* Three displayable columns */
+    //else
+    //  regwindow->clist_ptr = gtk_clist_new(2);            /*  or only two columns */
+    //
+    //gtk_widget_set_style(regwindow->clist_ptr, fixed_style);
+    //for (temp = 0; temp < (board->reg_banks[regwindow->regbank_no]).number; temp++)
+    //  gtk_clist_append(GTK_CLIST(regwindow->clist_ptr), startdata);
+    //gtk_clist_set_selection_mode(GTK_CLIST(regwindow->clist_ptr),
+    //                             GTK_SELECTION_BROWSE);
+    //
+    //gtk_signal_connect(GTK_OBJECT(regwindow->clist_ptr), "select-row",
+    //                   GTK_SIGNAL_FUNC(callback_regwindow_clist), NULL);
+    //gtk_widget_show(regwindow->clist_ptr);
+    //gtk_container_add(GTK_CONTAINER(scrolledwindow), regwindow->clist_ptr);
+    //
+    //if (board->reg_banks[regwindow->regbank_no].width > 0)
+    //  gtk_clist_column_titles_show(GTK_CLIST(regwindow->clist_ptr));
+    //                                /* Omit titles for width = 0 (bit display(?)) */
+    //
+    //temp_label = column_label(startdata[0], regwindow->clist_ptr, 0,
+    //                          REG_ADDR_COL_WIDTH);
+    //temp_label = column_label(startdata[1], regwindow->clist_ptr, 1,
+    //                          board->reg_banks[regwindow->regbank_no].width
+    //                        * REG_VALUE_CHAR_WIDTH + 8);
+    //temp_label = column_label(startdata[2], regwindow->clist_ptr, 2, -1);
+    //
+    //view_updateregwindow(regwindow);
 //if (board->reg_banks[regwindow->regbank_no].pointer)
 //  board->reg_banks[regwindow->regbank_no].pointer++;
 //
