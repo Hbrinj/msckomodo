@@ -579,7 +579,8 @@ return ret;                /* one to indicate successful update of the memory */
 
 int view_updateregwindow(reg_window *regwindowptr)
 {
-GtkCList *clist;
+GtkListStore *liststore;
+GtkTreeModel *treemodel;
 char *element[] = { "SPSR", "00000000", "????" };/* needed when omitting SPSR */
 reg_bank *regbank;
 
@@ -601,33 +602,46 @@ reg_bank *regbank;
   return;
   }
 
-  void update_reg_clist()
-  {
-  int count;
-  char *data0, *data1, data2[MAX_REG_SIZE+1];          /* "+1" for terminator */
+    void update_reg_clist()
+    {
+      int count;
+      GtkTreePath *path;
+      GtkTreeIter iter;
+      char *data0, *data1, data2[MAX_REG_SIZE+1];          /* "+1" for terminator */
 
-  for (count = 0; count < regbank->number; count++)
-    {                                        /* All registers in current bank */
-    data0 = view_get_reg_name(count, regbank);
+        for (count = 0; count < regbank->number; count++) {    /* All registers in current bank */
+            // grab a path object to point to the 'count' element
+            path = gtk_tree_path_new_from_indices(count);
 
-    if (regbank->width != 0)
-      data1 = view_chararr2hexstrbe(regbank->width,
-                                   &regbank->values[count * regbank->width]);
-         /* retrieving values of registers and setting them to be hexadecimal */
-    else
-      if (regbank->values[count] != 0) data1 = "1"; else data1 = "0";
+            // grab an iterator which points to the relevant row
+            gtk_tree_model_get_iter(treemodel, &iter, path);
 
-    reg_ASCII(&regbank->values[count * regbank->width], &data2[0], MAX_REG_SIZE);
+            // free the no longer needed path
+            gtk_tree_path_free(path);
 
-    view_update_field(clist, count, 0, data0);     /*Address is static really */
-    view_update_field(clist, count, 1, data1);
-    view_update_field(clist, count, 2, data2);
 
-    if (regbank->width != 0) g_free(data1);
-    g_free(data0);
+            data0 = view_get_reg_name(count, regbank);
+
+            //if (regbank->width != 0)
+              data1 = view_chararr2hexstrbe(regbank->width,
+                                           &regbank->values[count * regbank->width]);
+                 /* retrieving values of registers and setting them to be hexadecimal */
+            //else
+            //  if (regbank->values[count] != 0) data1 = "1"; else data1 = "0";
+
+            reg_ASCII(&regbank->values[count * regbank->width], &data2[0], MAX_REG_SIZE);
+
+            gtk_list_store_set(liststore, &iter,
+                    COLUMN_REG, data0,
+                    COLUMN_HEX, data1,
+                    COLUMN_ASCII, data2,
+                    -1);
+            //if (regbank->width != 0) g_free(data1);
+            g_free(data1);
+            g_free(data0);
+        }
+        return;
     }
-  return;
-  }
 
 /*                                                                            */
 /** * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
@@ -645,7 +659,7 @@ reg_bank *regbank;
       {               /* If the bottom 4 bits in CPSR is 0xF or 0x0 hide SPSR */
       if (spsr_exists)
         {      /* if we deal with 'current' and the value of CPSR is as above */
-        gtk_clist_remove(clist, SPSR);
+        //gtk_clist_remove(clist, SPSR);
         spsr_exists = FALSE;                        /* unset flag as expected */
         }
       }
@@ -657,7 +671,7 @@ reg_bank *regbank;
                                           &regbank->values[SPSR*regbank->width]);
         reg_ASCII(&regbank->values[SPSR*regbank->width], &ascii[0], MAX_REG_SIZE);
         element[2] = &ascii[0];
-        gtk_clist_insert(clist, SPSR, element);
+        //gtk_clist_insert(clist, SPSR, element);
         g_free(element[1]);
         spsr_exists = TRUE;            /* Indicate that SPSR is now displayed */
         }
@@ -732,18 +746,22 @@ if (TRACE > 5) g_print("view_updateregwindow\n");
 
 ret = 1;
 
+gint page = gtk_notebook_get_current_page(register_notebook);
+g_print("%d was the page\n", page);
 if (regwindowptr->regbank_no == gtk_notebook_get_current_page(register_notebook))
   {                             /* Only do anything if this is the front page */
              /* Only works with single register window - handle is global @@@ */
   if ((board_get_regbank(regwindowptr->regbank_no))      /* get register bank */
    || (board_mini_ping() && board_get_regbank(regwindowptr->regbank_no)))
     {                                                        /*  successfully */
-    clist = GTK_CLIST(regwindowptr->clist_ptr);
-    gtk_clist_freeze(clist);
+    treemodel = gtk_tree_view_get_model(GTK_TREE_VIEW(regwindowptr->treeview_ptr));
+    liststore = GTK_LIST_STORE(treemodel);
+    //gtk_clist_freeze(clist);
 
     regbank = &board->reg_banks[regwindowptr->regbank_no];
-                                 /* the current register bank being refreshed */
-
+                   /* the current register bank being refreshed */
+    g_print(regbank->name);
+    g_print("\n");
     update_reg_clist();
 
     if (strcmp(board->cpu_name, "ARM") == 0) /* Following only applies to ARM */
@@ -754,7 +772,7 @@ if (regwindowptr->regbank_no == gtk_notebook_get_current_page(register_notebook)
       display_psr(0, &regbank->values[CPSR * regbank->width]);
       display_psr(1, &regbank->values[SPSR * regbank->width]);
       }
-    gtk_clist_thaw(clist);
+    //gtk_clist_thaw(clist);
     }
   else ret = 0;                                  /* Error in client interface */
   }

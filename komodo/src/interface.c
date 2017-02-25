@@ -816,8 +816,7 @@ if (okay)
     g_free(message);
     }
   }
-
-if (!okay) board_version = -1;
+if (!okay){ board_version = -1; g_print("board got set to -1"); }
 return okay;
 }
 

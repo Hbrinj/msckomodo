@@ -1367,7 +1367,7 @@ unsigned int dummy;
 
 if (TRACE > 3) g_print("callback_refresh_selection\n");
 
-//if (registers) callback_register_refresh();
+if (registers) callback_register_refresh();
 //if (memory)    callback_memory_refresh();
 //if (status)    board_enq(&dummy);                    // over-heavy (?) @@@
 return;
@@ -1420,10 +1420,11 @@ for (regbank = 0; regbank < board->num_regbanks; regbank++)  // WHY? @@@ HERE?!?
   if (1 == board->reg_banks[regbank].pointer)                /* if pointer==1 */
     if (!board_get_regbank(regbank))            /* if unable to get reg. bank */
       {
+      g_print("something went wrong\n");
       if (!board_mini_ping() || !board_get_regbank(regbank)) return;
                                /* if seems like access is lost, abort refresh */
       }
-
+g_print("got to the while\n");
 while (NULL != rlist)
   {
   view_updateregwindow(rlist->reg_data_ptr);                      /* Refresh  */

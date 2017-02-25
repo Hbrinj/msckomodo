@@ -102,7 +102,7 @@ GtkWidget *view_create_memory_clist(mem_win_type, int, GtkWidget*, int);
 GtkWidget *view_create_register_clist(int);
 GtkWidget *view_create_console(void);
 GtkWidget *view_create_comms(feature*);
-GtkWidget *view_parse_list(void);
+GtkWidget * view_parse_list(void);
 GtkWidget *view_create_menubar(void);
 GtkWidget *view_create_status_bar(void);  /* Creates the status bar at bottom */
 GtkWidget *view_create_mov_split(orientation);
@@ -160,8 +160,8 @@ view_mainwindow = GTK_WIDGET(gtk_builder_get_object(builder, "kmd_main_window"))
 gtk_builder_connect_signals(builder, NULL);
 
 connect_menubar_signals(builder);
+//view_parse_list();  /* Fill main area as specified by ".komodo" */
 setup_reg_view(builder);
-gtk_widget_show_all(view_mainwindow);
 
 g_object_unref(builder);
 
@@ -237,7 +237,7 @@ g_object_unref(builder);
 ////  [JNZ `packs' status bar here] @@@
 //
 //
-//window_body = view_parse_list();  /* Fill main area as specified by ".komodo" */
+//view_parse_list();  /* Fill main area as specified by ".komodo" */
 //
 //gtk_widget_set_usize(window_body, MAIN_AREA_X, MAIN_AREA_Y);/* Size main area */
 //
@@ -281,29 +281,73 @@ void connect_menubar_signals(GtkBuilder *builder)
 
 void setup_reg_view(GtkBuilder *builder)
 {
+    const target_system *_board = board;
+
+    GtkListStore *temp_list;
+    GtkWidget *temp_treeview;
     GtkTreeViewColumn *reg_column, *hex_column, *ascii_column;
-    // grab a handle to the notebook
-    GtkWidget *notebook = GTK_WIDGET(gtk_builder_get_object(builder, "kmd_main_notebook_reg"));
+    reg_window *temp_regwindow;
+    char *startdata[] = { "Reg", "Value (Hex)", "ASCII" };
+    GtkTreeIter iter;
+    reg_bank *regbank;
 
-    // create our treeview model
-    GtkListStore *list = gtk_list_store_new(3, G_TYPE_STRING, G_TYPE_STRING, G_TYPE_STRING);
-
-    // create our treeview
-    GtkWidget *treeview = gtk_tree_view_new_with_model(GTK_TREE_MODEL(list));
-
+    //grab a pointer to the reglist;
+    reg_window_entry **regwindowlist = &view_regwindowlist;
+    
     //create a renderer that knows how to deal with text;
     GtkCellRenderer *renderer = gtk_cell_renderer_text_new();
+    
+    // grab a handle to the notebook
+    register_notebook = GTK_NOTEBOOK(GTK_WIDGET(gtk_builder_get_object(builder, "kmd_main_notebook_reg")));
 
-    // Create the columns
-    reg_column = gtk_tree_view_column_new_with_attributes("Reg", renderer, "text", COLUMN_REG, NULL);
-    hex_column = gtk_tree_view_column_new_with_attributes("Hex", renderer, "text", COLUMN_HEX, NULL);
-    ascii_column = gtk_tree_view_column_new_with_attributes("Ascii", renderer, "text", COLUMN_ASCII, NULL);
-    gtk_tree_view_append_column(GTK_TREE_VIEW(treeview), reg_column);
-    gtk_tree_view_append_column(GTK_TREE_VIEW(treeview), hex_column);
-    gtk_tree_view_append_column(GTK_TREE_VIEW(treeview), ascii_column);
 
-    gtk_notebook_append_page(notebook, treeview, gtk_label_new("current"));
+    // -3 really hacky needs a proper work-around
+    for(int i = 0; i < _board->num_regbanks -3; ++i) {
+        
+        regbank = &(_board->reg_banks[i]);
+        temp_regwindow = g_new(reg_window, 1);              /* Allocate window data record */
+        temp_regwindow->regbank_no = i;
 
+        // add a new register entry
+        *regwindowlist = g_new(reg_window_entry, 1);    /* Allocate new list entry(?) */
+        (*regwindowlist)->reg_data_ptr = temp_regwindow;   /* Add window to allocated list */
+        (*regwindowlist)->next = NULL;
+
+        // Point the list to the next empty slot
+        regwindowlist = &((*regwindowlist)->next);
+
+        // create our treeview model
+        temp_list = gtk_list_store_new(3, G_TYPE_STRING, G_TYPE_STRING, G_TYPE_STRING);
+
+        // create our treeview
+        temp_treeview = gtk_tree_view_new_with_model(GTK_TREE_MODEL(temp_list));
+        temp_regwindow->treeview_ptr = temp_treeview;
+
+        // Create the columns
+        reg_column = gtk_tree_view_column_new_with_attributes("Reg", renderer, "text", COLUMN_REG, NULL);
+        hex_column = gtk_tree_view_column_new_with_attributes("Hex", renderer, "text", COLUMN_HEX, NULL);
+        ascii_column = gtk_tree_view_column_new_with_attributes("Ascii", renderer, "text", COLUMN_ASCII, NULL);
+        gtk_tree_view_append_column(GTK_TREE_VIEW(temp_treeview), reg_column);
+        gtk_tree_view_append_column(GTK_TREE_VIEW(temp_treeview), hex_column);
+        gtk_tree_view_append_column(GTK_TREE_VIEW(temp_treeview), ascii_column);
+
+        gtk_widget_show(GTK_WIDGET(temp_treeview));
+        // Add the page to the notebook
+        gint status = gtk_notebook_append_page(register_notebook,temp_treeview, gtk_label_new(regbank->name));
+        g_print("%d, appending pages\n", status);
+
+        for(int j = 0; j < regbank->number; j++) {
+            gtk_list_store_append(temp_list, &iter);
+            gtk_list_store_set(temp_list, &iter,
+                    COLUMN_REG, startdata[0],
+                    COLUMN_HEX, startdata[1],
+                    COLUMN_ASCII, startdata[2],
+                    -1);
+        }
+        if(regbank->pointer == 0) regbank->pointer++;
+        
+    }
+    gtk_widget_show(register_notebook);
 }
 //-------------------- END REVAMPED CODE --------
 
@@ -2574,97 +2618,97 @@ return frame;                  /* return the frame with the appropriate flags */
 #define REG_ADDR_COL_WIDTH   (REG_NAME_MAX_LEN * REG_CHAR_WIDTH)
 #define REG_VALUE_CHAR_WIDTH (2 * REG_CHAR_WIDTH)        /* 2 digits per byte */
 
-GtkWidget *view_create_register_clist(int regbanknumber)
-{
-GtkWidget *scrolledwindow;
-GtkWidget *vbox;
-GtkWidget *entry_strip;
-GtkWidget *frame;
-reg_window *regwindow;
-reg_window_entry **regwindowlist;
-
-char *startdata[] = { "Reg", "Value (Hex)", "ASCII" };
-int temp;
-GtkWidget *temp_label;
-
-
-if (TRACE > 5) g_print("view_create_register_clist\n");
-
-regwindow = g_new(reg_window, 1);              /* Allocate window data record */
-regwindowlist = &view_regwindowlist;
-
-regwindow->regbank_no = regbanknumber;
-while (NULL != *regwindowlist) regwindowlist = &((*regwindowlist)->next);
-*regwindowlist = g_new(reg_window_entry, 1);    /* Allocate new list entry(?) */
-(*regwindowlist)->reg_data_ptr = regwindow;   /* Add window to allocated list */
-(*regwindowlist)->next = NULL;
-
-frame = gtk_frame_new(board->reg_banks[regwindow->regbank_no].name);
-gtk_widget_ref(frame);         /* Create frame to keep everything in (??) @@@ */
-gtk_widget_show(frame);
-gtk_widget_set_usize(frame, REG_WIDGET_X, REG_WIDGET_Y);
-
-vbox = new_box(FALSE, 0, VERTICAL);
-gtk_object_set_data(GTK_OBJECT(vbox), "reg_window", regwindow);
-gtk_container_add(GTK_CONTAINER(frame), vbox);
-
-regwindow->wait  = 100;
-regwindow->timer = 0;
-
-entry_strip = new_box(FALSE, 0, HORIZONTAL);/* Produce strip with entry boxes */
-gtk_box_pack_start(GTK_BOX(vbox), entry_strip, FALSE, FALSE, 0);
-
-                                  /* Note similarities with "entry_box()" @@@ */
-regwindow->address_entry = entry_box(entry_strip, REG_NAME_MAX_LEN,
-                                                  REG_ADDR_COL_WIDTH + 8, NULL);
-// "style" added implicitly @@@
-
-regwindow->hex_entry = entry_box(entry_strip, MAX_ADDRESS_OR_HEX_ENTRY,
-                             board->reg_banks[regwindow->regbank_no].width
-                           * REG_VALUE_CHAR_WIDTH + 16,
-                             GTK_SIGNAL_FUNC(callback_regwindow_hex));
-
-							// ASCII entry box(?) @@@
-
-scrolledwindow = gtk_scrolled_window_new(NULL, NULL);           /* Main panel */
-gtk_scrolled_window_set_policy(GTK_SCROLLED_WINDOW(scrolledwindow),
-                               GTK_POLICY_NEVER, GTK_POLICY_AUTOMATIC);
-gtk_widget_show(scrolledwindow);
-gtk_box_pack_start(GTK_BOX(vbox), scrolledwindow, TRUE, TRUE, 0);
-
-if (board->reg_banks[regwindow->regbank_no].width > 0)
-  regwindow->clist_ptr = gtk_clist_new(3);       /* Three displayable columns */
-else
-  regwindow->clist_ptr = gtk_clist_new(2);            /*  or only two columns */
-
-gtk_widget_set_style(regwindow->clist_ptr, fixed_style);
-for (temp = 0; temp < (board->reg_banks[regwindow->regbank_no]).number; temp++)
-  gtk_clist_append(GTK_CLIST(regwindow->clist_ptr), startdata);
-gtk_clist_set_selection_mode(GTK_CLIST(regwindow->clist_ptr),
-                             GTK_SELECTION_BROWSE);
-
-gtk_signal_connect(GTK_OBJECT(regwindow->clist_ptr), "select-row",
-                   GTK_SIGNAL_FUNC(callback_regwindow_clist), NULL);
-gtk_widget_show(regwindow->clist_ptr);
-gtk_container_add(GTK_CONTAINER(scrolledwindow), regwindow->clist_ptr);
-
-if (board->reg_banks[regwindow->regbank_no].width > 0)
-  gtk_clist_column_titles_show(GTK_CLIST(regwindow->clist_ptr));
-                                /* Omit titles for width = 0 (bit display(?)) */
-
-temp_label = column_label(startdata[0], regwindow->clist_ptr, 0,
-                          REG_ADDR_COL_WIDTH);
-temp_label = column_label(startdata[1], regwindow->clist_ptr, 1,
-                          board->reg_banks[regwindow->regbank_no].width
-                        * REG_VALUE_CHAR_WIDTH + 8);
-temp_label = column_label(startdata[2], regwindow->clist_ptr, 2, -1);
-
-view_updateregwindow(regwindow);
-if (board->reg_banks[regwindow->regbank_no].pointer)
-  board->reg_banks[regwindow->regbank_no].pointer++;
-
-return frame;
-}
+//GtkWidget *view_create_register_clist(int regbanknumber)
+//{
+//GtkWidget *scrolledwindow;
+//GtkWidget *vbox;
+//GtkWidget *entry_strip;
+//GtkWidget *frame;
+//reg_window *regwindow;
+//reg_window_entry **regwindowlist;
+//
+//char *startdata[] = { "Reg", "Value (Hex)", "ASCII" };
+//int temp;
+//GtkWidget *temp_label;
+//
+//
+//if (TRACE > 5) g_print("view_create_register_clist\n");
+//
+//regwindow = g_new(reg_window, 1);              /* Allocate window data record */
+//regwindowlist = &view_regwindowlist;
+//
+//regwindow->regbank_no = regbanknumber;
+//while (NULL != *regwindowlist) regwindowlist = &((*regwindowlist)->next);
+//*regwindowlist = g_new(reg_window_entry, 1);    /* Allocate new list entry(?) */
+//(*regwindowlist)->reg_data_ptr = regwindow;   /* Add window to allocated list */
+//(*regwindowlist)->next = NULL;
+//
+//frame = gtk_frame_new(board->reg_banks[regwindow->regbank_no].name);
+//gtk_widget_ref(frame);         /* Create frame to keep everything in (??) @@@ */
+//gtk_widget_show(frame);
+//gtk_widget_set_usize(frame, REG_WIDGET_X, REG_WIDGET_Y);
+//
+//vbox = new_box(FALSE, 0, VERTICAL);
+//gtk_object_set_data(GTK_OBJECT(vbox), "reg_window", regwindow);
+//gtk_container_add(GTK_CONTAINER(frame), vbox);
+//
+//regwindow->wait  = 100;
+//regwindow->timer = 0;
+//
+//entry_strip = new_box(FALSE, 0, HORIZONTAL);/* Produce strip with entry boxes */
+//gtk_box_pack_start(GTK_BOX(vbox), entry_strip, FALSE, FALSE, 0);
+//
+//                                  /* Note similarities with "entry_box()" @@@ */
+//regwindow->address_entry = entry_box(entry_strip, REG_NAME_MAX_LEN,
+//                                                  REG_ADDR_COL_WIDTH + 8, NULL);
+//// "style" added implicitly @@@
+//
+//regwindow->hex_entry = entry_box(entry_strip, MAX_ADDRESS_OR_HEX_ENTRY,
+//                             board->reg_banks[regwindow->regbank_no].width
+//                           * REG_VALUE_CHAR_WIDTH + 16,
+//                             GTK_SIGNAL_FUNC(callback_regwindow_hex));
+//
+//							// ASCII entry box(?) @@@
+//
+//scrolledwindow = gtk_scrolled_window_new(NULL, NULL);           /* Main panel */
+//gtk_scrolled_window_set_policy(GTK_SCROLLED_WINDOW(scrolledwindow),
+//                               GTK_POLICY_NEVER, GTK_POLICY_AUTOMATIC);
+//gtk_widget_show(scrolledwindow);
+//gtk_box_pack_start(GTK_BOX(vbox), scrolledwindow, TRUE, TRUE, 0);
+//
+//if (board->reg_banks[regwindow->regbank_no].width > 0)
+//  regwindow->clist_ptr = gtk_clist_new(3);       /* Three displayable columns */
+//else
+//  regwindow->clist_ptr = gtk_clist_new(2);            /*  or only two columns */
+//
+//gtk_widget_set_style(regwindow->clist_ptr, fixed_style);
+//for (temp = 0; temp < (board->reg_banks[regwindow->regbank_no]).number; temp++)
+//  gtk_clist_append(GTK_CLIST(regwindow->clist_ptr), startdata);
+//gtk_clist_set_selection_mode(GTK_CLIST(regwindow->clist_ptr),
+//                             GTK_SELECTION_BROWSE);
+//
+//gtk_signal_connect(GTK_OBJECT(regwindow->clist_ptr), "select-row",
+//                   GTK_SIGNAL_FUNC(callback_regwindow_clist), NULL);
+//gtk_widget_show(regwindow->clist_ptr);
+//gtk_container_add(GTK_CONTAINER(scrolledwindow), regwindow->clist_ptr);
+//
+//if (board->reg_banks[regwindow->regbank_no].width > 0)
+//  gtk_clist_column_titles_show(GTK_CLIST(regwindow->clist_ptr));
+//                                /* Omit titles for width = 0 (bit display(?)) */
+//
+//temp_label = column_label(startdata[0], regwindow->clist_ptr, 0,
+//                          REG_ADDR_COL_WIDTH);
+//temp_label = column_label(startdata[1], regwindow->clist_ptr, 1,
+//                          board->reg_banks[regwindow->regbank_no].width
+//                        * REG_VALUE_CHAR_WIDTH + 8);
+//temp_label = column_label(startdata[2], regwindow->clist_ptr, 2, -1);
+//
+//view_updateregwindow(regwindow);
+//if (board->reg_banks[regwindow->regbank_no].pointer)
+//  board->reg_banks[regwindow->regbank_no].pointer++;
+//
+//return frame;
+//}
 
 /*                                                                            */
 /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
@@ -2872,82 +2916,85 @@ if (TRACE > 5) g_print("view_parse_list\n");
 switch (*(view_window_display_list++))
   {
   case '!':
-    ret = view_create_mov_split(HORIZONTAL);
-    gtk_paned_pack1 (GTK_PANED (ret), view_parse_list (), FALSE, FALSE);
-    gtk_paned_pack2 (GTK_PANED (ret), view_parse_list (), FALSE, FALSE);
+    //ret = view_create_mov_split(HORIZONTAL);
+    //gtk_paned_pack1 (GTK_PANED (ret), view_parse_list (), FALSE, FALSE);
+    //gtk_paned_pack2 (GTK_PANED (ret), view_parse_list (), FALSE, FALSE);
     return ret;
 
   case '~':
-    ret = view_create_mov_split(VERTICAL);
-    gtk_paned_pack1 (GTK_PANED (ret), view_parse_list (), FALSE, FALSE);
-    gtk_paned_pack2 (GTK_PANED (ret), view_parse_list (), FALSE, FALSE);
+    //ret = view_create_mov_split(VERTICAL);
+    //gtk_paned_pack1 (GTK_PANED (ret), view_parse_list (), FALSE, FALSE);
+    //gtk_paned_pack2 (GTK_PANED (ret), view_parse_list (), FALSE, FALSE);
     return ret;
 
   case '|':
-    ret = new_box(FALSE, 4, HORIZONTAL);
-    do
-      gtk_box_pack_start (GTK_BOX (ret), view_parse_list (), TRUE, TRUE, 0);
-      while (',' == *(view_window_display_list++));
-    view_window_display_list--;
+   // ret = new_box(FALSE, 4, HORIZONTAL);
+   do {
+       view_parse_list();
+
+   //   gtk_box_pack_start (GTK_BOX (ret), view_parse_list (), TRUE, TRUE, 0);
+   }while (',' == *(view_window_display_list++));
+   view_window_display_list--;
     return ret;
 
   case '-':
-    ret = new_box(FALSE, 4, VERTICAL);
-    do
-      gtk_box_pack_start (GTK_BOX (ret), view_parse_list (), TRUE, TRUE, 0);
-      while (',' == (*(view_window_display_list++)));
-    view_window_display_list--;
+   // ret = new_box(FALSE, 4, VERTICAL);
+   do {
+       view_parse_list();
+   //   gtk_box_pack_start (GTK_BOX (ret), view_parse_list (), TRUE, TRUE, 0);
+    } while (',' == (*(view_window_display_list++)));
+   view_window_display_list--;
     return ret;
 
   case 'N':
-    ret = gtk_notebook_new ();
-    if (call_number_to_notebook == 0) register_notebook = GTK_NOTEBOOK(ret);
-                /* save reference to this item if it is the first call to 'N' */
-    if (call_number_to_notebook == 1) flags_notebook = GTK_NOTEBOOK(ret);
-               /* save reference to this item if it is the second call to 'N' */
-   /* @@@ WHAT?!?!?! @@@ */
+    //ret = gtk_notebook_new ();
+    //if (call_number_to_notebook == 0) register_notebook = GTK_NOTEBOOK(ret);
+    //            /* save reference to this item if it is the first call to 'N' */
+    //if (call_number_to_notebook == 1) flags_notebook = GTK_NOTEBOOK(ret);
+    //           /* save reference to this item if it is the second call to 'N' */
+   ///* @@@ WHAT?!?!?! @@@ */
 
-    gtk_notebook_set_tab_pos (GTK_NOTEBOOK (ret), GTK_POS_LEFT);
-    gtk_widget_ref (ret);
-    gtk_widget_show (ret);
-    tempint = 0;
-    do
-      {
-      char *temp = view_window_display_list;
-      GtkWidget *label;
+    //gtk_notebook_set_tab_pos (GTK_NOTEBOOK (ret), GTK_POS_LEFT);
+    //gtk_widget_ref (ret);
+    //gtk_widget_show (ret);
+    //tempint = 0;
+    //do
+    //  {
+    //  char *temp = view_window_display_list;
+    //  GtkWidget *label;
 
-      while ('.' != *view_window_display_list) view_window_display_list++;
-      *(view_window_display_list++) = '\0';
-      gtk_container_add (GTK_CONTAINER (ret), label = view_parse_list ());
-      gtk_container_set_border_width (GTK_CONTAINER (label), 4);
-      label = gtk_label_new (temp);
-      gtk_widget_ref (label);
-      gtk_widget_show (label);
-      gtk_notebook_set_tab_label(GTK_NOTEBOOK(ret),
-                      gtk_notebook_get_nth_page(GTK_NOTEBOOK(ret), tempint++),
-                      label);
-      }
-      while ('.' == (*(view_window_display_list++)));
+    //  while ('.' != *view_window_display_list) view_window_display_list++;
+    //  *(view_window_display_list++) = '\0';
+    //  gtk_container_add (GTK_CONTAINER (ret), label = view_parse_list ());
+    //  gtk_container_set_border_width (GTK_CONTAINER (label), 4);
+    //  label = gtk_label_new (temp);
+    //  gtk_widget_ref (label);
+    //  gtk_widget_show (label);
+    //  gtk_notebook_set_tab_label(GTK_NOTEBOOK(ret),
+    //                  gtk_notebook_get_nth_page(GTK_NOTEBOOK(ret), tempint++),
+    //                  label);
+    //  }
+    //  while ('.' == (*(view_window_display_list++)));
 
-    view_window_display_list--;
-    call_number_to_notebook++;
-    gtk_signal_connect_after(GTK_OBJECT(ret), "switch-page",
-                             GTK_SIGNAL_FUNC(callback_reg_notebook_change),
-                             NULL);         /* Signal -following- page change */
-                        /*  so that the flag window can be brought up to date */
+    //view_window_display_list--;
+    //call_number_to_notebook++;
+    //gtk_signal_connect_after(GTK_OBJECT(ret), "switch-page",
+    //                         GTK_SIGNAL_FUNC(callback_reg_notebook_change),
+    //                         NULL);         /* Signal -following- page change */
+    //                    /*  so that the flag window can be brought up to date */
     return ret;
 
 					// Needs code for getting source panel @@@
   case 'R':
-    return view_create_register_clist (*(view_window_display_list++) - '0');
+    //return view_create_register_clist (*(view_window_display_list++) - '0');
   case 'M':
-    return view_create_memory_clist(MEM_WIN_DUMP,   FALSE, NULL, MEM_REP_WORD);
+    //return view_create_memory_clist(MEM_WIN_DUMP,   FALSE, NULL, MEM_REP_WORD);
   case 'K':
-    return view_create_memory_clist(MEM_WIN_SOURCE, FALSE, NULL, MEM_REP_WORD);
+    //return view_create_memory_clist(MEM_WIN_SOURCE, FALSE, NULL, MEM_REP_WORD);
   case 'F':
-    return view_create_flag_frame (CURRENT);
+    //return view_create_flag_frame (CURRENT);
   case 'S':
-    return view_create_flag_frame (SAVED);
+    //return view_create_flag_frame (SAVED);
   case 'C':
     return view_create_console ();
   }

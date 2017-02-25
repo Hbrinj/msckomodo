@@ -151,7 +151,7 @@ sym_window_entry;
 
 typedef struct reg_window_name
 {
-  GtkWidget *clist_ptr;
+  GtkWidget *treeview_ptr;
   GtkWidget *address_entry;
   GtkWidget *hex_entry;
   int        regbank_no;
