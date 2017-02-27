@@ -404,10 +404,12 @@ void create_mem_view(GtkBuilder *builder)
     memwindow->type = MEM_WIN_SOURCE;
     memwindow->row_addresses = NULL;
     memwindow->address = g_new0(uchar, board->memory_ptr_width);
-    memwindow->count = 1;
+    memwindow->count = 30;
     memwindow->hex_entry = NULL;
     memwindow->ascii_entry = NULL;
     memwindow->dis_entry = NULL;
+    memwindow->gran = 4;
+    memwindow->width = 4;
 
     // we only have one memory window so this is going to be NULL;
     view_memwindowlist = g_new(mem_window_entry, 1);

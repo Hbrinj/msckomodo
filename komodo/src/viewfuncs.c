@@ -20,8 +20,9 @@
 #include "misc.h"
 #include "view.h"
 
-#define MAX_REG_SIZE 8 /* Size of largest printable ASCII field for register   \
-                          */
+#define MAX_REG_SIZE                                                           \
+  8 /* Size of largest printable ASCII field for register                      \
+       */
 /* E.g. 8 is enough for up to 64 bits */
 
 /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
@@ -912,11 +913,12 @@ void view_update_field(GtkTreeModel *treemodel, int row, int column,
   char *test;
 
   liststore = GTK_LIST_STORE(treemodel);
+  g_print("%d:row\n", row);
   path = gtk_tree_path_new_from_indices(row);
 
   if (gtk_tree_model_get_iter(treemodel, &iter, path)) {
     gtk_tree_model_get(treemodel, &iter, column, &test, -1);
-    if (strcmp(text, test) != 0) {
+    if (test == NULL || strncmp(text, test,4) != 0) {
       gtk_list_store_set(liststore, &iter, column, text, -1);
     }
   } else {
