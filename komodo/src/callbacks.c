@@ -1472,192 +1472,192 @@ callback_memwindow_length(view_getmemwindowptr(GTK_WIDGET(menuitem)),p_newvalue)
 void callback_memwindow_length(mem_window *memwin, gpointer p_newvalue)
                                             /* The line width and granularity */
 {
-typedef enum {OFF, ON, ASIS} button_state;
-
-int temp, newvalue;
-int max_hex_column;
-
-
-  void waggle_buttons(button_state ascii, button_state disassembly)
-  {                                    /* This relies on C-style Booleans :-( */
-  if (memwin->ascii_button != NULL)
-    switch (ascii)
-      {
-      case OFF:
-        gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(memwin->ascii_button),FALSE);
-        break;
-      case ON:
-        gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(memwin->ascii_button), TRUE);
-        break;
-      default: break;                                  /* Leave setting "As is" */
-      }
-
-  if (memwin->dis_button != NULL)
-    switch (disassembly)
-      {
-      case OFF:
-        gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(memwin->dis_button),FALSE);
-        break;
-      case ON:
-        gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(memwin->dis_button), TRUE);
-        break;
-      default: break;                                  /* Leave setting "As is" */
-      }
-
-  return;
-  }
-
-if (TRACE > 5) g_print("callback_memwindow_length\n");
-
-/***** The ASCII entry and dis. will have to check state of column visibility */
-/*  and callback the ASCII and dis. if true                                   */
-
-newvalue = *(int*)p_newvalue;                        /* Isn't C syntax great? */
-
-switch (newvalue)
-  {
-  /* Following cases bind a new values to reflect the representation and make */
-  /*  sure the appropriate callbacks are invoked w.r.t. ASCII and disassembly */
-
-  case MEM_REP_BYTE:
-    memwin->width = 1;
-    memwin->gran  = 1;
-    waggle_buttons(ON, OFF);
-    break;
-  case MEM_REP_2_BYTES:
-    memwin->width = 2;
-    memwin->gran  = 1;
-    waggle_buttons(ON, OFF);
-    break;
-  case MEM_REP_4_BYTES:
-    memwin->width = 4;
-    memwin->gran  = 1;
-    waggle_buttons(ON, ASIS);
-    break;
-  case MEM_REP_8_BYTES:
-    memwin->width = 8;
-    memwin->gran  = 1;
-    waggle_buttons(ON, OFF);
-    break;
-  case MEM_REP_16_BYTES:
-    memwin->width = 16;
-    memwin->gran  = 1;
-    waggle_buttons(OFF, OFF);
-    break;
-  case MEM_REP_32_BYTES:
-    memwin->width = 32;
-    memwin->gran  = 1;
-    waggle_buttons(OFF, OFF);
-    break;
-  case MEM_REP_HALFWORD:
-    memwin->width = 2;
-    memwin->gran  = 2;
-    waggle_buttons(ON, OFF);
-    break;
-  case MEM_REP_2_HALFWORDS:
-    memwin->width = 4;
-    memwin->gran  = 2;
-    waggle_buttons(ON, ASIS);
-    break;
-  case MEM_REP_4_HALFWORDS:
-    memwin->width = 8;
-    memwin->gran  = 2;
-    waggle_buttons(ON, OFF);
-    break;
-  case MEM_REP_8_HALFWORDS:
-    memwin->width = 16;
-    memwin->gran  = 2;
-    waggle_buttons(OFF, OFF);
-    break;
-  case MEM_REP_16_HALFWORDS:
-    memwin->width = 32;
-    memwin->gran  = 2;
-    waggle_buttons(OFF, OFF);
-    break;
-  case MEM_REP_WORD:
-    memwin->width = 4;
-    memwin->gran  = 4;
-    waggle_buttons(ON, ON);
-    break;
-  case MEM_REP_2_WORDS:
-    memwin->width = 8;
-    memwin->gran  = 4;
-    waggle_buttons(ON, OFF);
-    break;
-  case MEM_REP_4_WORDS:
-    memwin->width = 16;
-    memwin->gran  = 4;
-    waggle_buttons(OFF, OFF);
-    break;
-  case MEM_REP_8_WORDS:
-    memwin->width = 32;
-    memwin->gran  = 4;
-    waggle_buttons(OFF, OFF);
-    break;
-  case MEM_REP_ASCII_MAP:
-    memwin->width = 64;
-    memwin->gran  = 1;
-    waggle_buttons(ON, OFF);
-    break;
-  case MEM_REP_ASCII_MAP128:
-    memwin->width = 128;
-    memwin->gran  = 1;
-    waggle_buttons(ON, OFF);
-    break;
-  default:
-    if (VERBOSE) g_print("Error: non-existent memory representation.\n");
-    memwin->width = 4;
-    memwin->gran  = 4;
-    waggle_buttons(ON, ON);
-    break;
-  }
-
-max_hex_column = memwin->width / memwin->gran;
-
-gtk_clist_freeze(GTK_CLIST(memwin->clist_ptr));
-                                            /* Freeze the current column list */
-
-if ((newvalue == MEM_REP_ASCII_MAP) || (newvalue == MEM_REP_ASCII_MAP128))
-                               /* Abnormal settings for this exceptional case */
-  {
-  for (temp = MAX_HEX_ENTRY; temp >= MIN_HEX_ENTRY; temp--)
-                                                    /* All hex to be disabled */
-    gtk_clist_set_column_visibility(GTK_CLIST(memwin->clist_ptr), temp, FALSE);
-  if (memwin->hex_entry != NULL) gtk_widget_hide(memwin->hex_entry);
-                                                        /* Hide hex entry box */
-  if (memwin->ascii_entry != NULL)
-    gtk_widget_set_usize(memwin->ascii_entry,450,-2);/* Set ASCII column size */
-  }
-else                                             /* Normal hex representation */
-  {
-  if (memwin->hex_entry != NULL) gtk_widget_show(memwin->hex_entry);
-                    /* Display hex entry box in case of return from ASCII map */
-
-  for (temp = MAX_HEX_ENTRY; temp >= MIN_HEX_ENTRY; temp--)
-    if (temp > max_hex_column)
-      gtk_clist_set_column_visibility(GTK_CLIST(memwin->clist_ptr), temp,FALSE);
-                            /* Disable all columns that need not be displayed */
-    else
-      {  /* From top hex column e.g. 4 for 4th hex, where 0 is address column */
-      gtk_clist_set_column_visibility(GTK_CLIST(memwin->clist_ptr), temp, TRUE);
-                                  /* Make hex columns visible where necessary */
-      gtk_clist_set_column_width(GTK_CLIST(memwin->clist_ptr), temp,
-                            (memwin->width*25)/(max_hex_column)-7);
-                                                      /*  and set their width */
-      }
-
-  if (memwin->hex_entry != NULL)                 /* Set size of hex entry box */
-    gtk_widget_set_usize(memwin->hex_entry, (memwin->width * 25), -2);
-
-  gtk_clist_set_column_width(GTK_CLIST(memwin->clist_ptr), ASCII_ENTRY,
-                             memwin->width * 10); /* Set width of ASCII entry */
-  if (memwin->ascii_entry != NULL)             /* Set size of ASCII entry box */
-    gtk_widget_set_usize(memwin->ascii_entry, (memwin->width * 10) + 7, -2);
-  }
-
-gtk_clist_thaw(GTK_CLIST(memwin->clist_ptr));
-                                  /* Display the list as it was newly defined */
-view_updatememwindow(memwin);                /* update the contents displayed */
+//typedef enum {OFF, ON, ASIS} button_state;
+//
+//int temp, newvalue;
+//int max_hex_column;
+//
+//
+//  void waggle_buttons(button_state ascii, button_state disassembly)
+//  {                                    /* This relies on C-style Booleans :-( */
+//  if (memwin->ascii_button != NULL)
+//    switch (ascii)
+//      {
+//      case OFF:
+//        gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(memwin->ascii_button),FALSE);
+//        break;
+//      case ON:
+//        gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(memwin->ascii_button), TRUE);
+//        break;
+//      default: break;                                  /* Leave setting "As is" */
+//      }
+//
+//  if (memwin->dis_button != NULL)
+//    switch (disassembly)
+//      {
+//      case OFF:
+//        gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(memwin->dis_button),FALSE);
+//        break;
+//      case ON:
+//        gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(memwin->dis_button), TRUE);
+//        break;
+//      default: break;                                  /* Leave setting "As is" */
+//      }
+//
+//  return;
+//  }
+//
+//if (TRACE > 5) g_print("callback_memwindow_length\n");
+//
+///***** The ASCII entry and dis. will have to check state of column visibility */
+///*  and callback the ASCII and dis. if true                                   */
+//
+//newvalue = *(int*)p_newvalue;                        /* Isn't C syntax great? */
+//
+//switch (newvalue)
+//  {
+//  /* Following cases bind a new values to reflect the representation and make */
+//  /*  sure the appropriate callbacks are invoked w.r.t. ASCII and disassembly */
+//
+//  case MEM_REP_BYTE:
+//    memwin->width = 1;
+//    memwin->gran  = 1;
+//    waggle_buttons(ON, OFF);
+//    break;
+//  case MEM_REP_2_BYTES:
+//    memwin->width = 2;
+//    memwin->gran  = 1;
+//    waggle_buttons(ON, OFF);
+//    break;
+//  case MEM_REP_4_BYTES:
+//    memwin->width = 4;
+//    memwin->gran  = 1;
+//    waggle_buttons(ON, ASIS);
+//    break;
+//  case MEM_REP_8_BYTES:
+//    memwin->width = 8;
+//    memwin->gran  = 1;
+//    waggle_buttons(ON, OFF);
+//    break;
+//  case MEM_REP_16_BYTES:
+//    memwin->width = 16;
+//    memwin->gran  = 1;
+//    waggle_buttons(OFF, OFF);
+//    break;
+//  case MEM_REP_32_BYTES:
+//    memwin->width = 32;
+//    memwin->gran  = 1;
+//    waggle_buttons(OFF, OFF);
+//    break;
+//  case MEM_REP_HALFWORD:
+//    memwin->width = 2;
+//    memwin->gran  = 2;
+//    waggle_buttons(ON, OFF);
+//    break;
+//  case MEM_REP_2_HALFWORDS:
+//    memwin->width = 4;
+//    memwin->gran  = 2;
+//    waggle_buttons(ON, ASIS);
+//    break;
+//  case MEM_REP_4_HALFWORDS:
+//    memwin->width = 8;
+//    memwin->gran  = 2;
+//    waggle_buttons(ON, OFF);
+//    break;
+//  case MEM_REP_8_HALFWORDS:
+//    memwin->width = 16;
+//    memwin->gran  = 2;
+//    waggle_buttons(OFF, OFF);
+//    break;
+//  case MEM_REP_16_HALFWORDS:
+//    memwin->width = 32;
+//    memwin->gran  = 2;
+//    waggle_buttons(OFF, OFF);
+//    break;
+//  case MEM_REP_WORD:
+//    memwin->width = 4;
+//    memwin->gran  = 4;
+//    waggle_buttons(ON, ON);
+//    break;
+//  case MEM_REP_2_WORDS:
+//    memwin->width = 8;
+//    memwin->gran  = 4;
+//    waggle_buttons(ON, OFF);
+//    break;
+//  case MEM_REP_4_WORDS:
+//    memwin->width = 16;
+//    memwin->gran  = 4;
+//    waggle_buttons(OFF, OFF);
+//    break;
+//  case MEM_REP_8_WORDS:
+//    memwin->width = 32;
+//    memwin->gran  = 4;
+//    waggle_buttons(OFF, OFF);
+//    break;
+//  case MEM_REP_ASCII_MAP:
+//    memwin->width = 64;
+//    memwin->gran  = 1;
+//    waggle_buttons(ON, OFF);
+//    break;
+//  case MEM_REP_ASCII_MAP128:
+//    memwin->width = 128;
+//    memwin->gran  = 1;
+//    waggle_buttons(ON, OFF);
+//    break;
+//  default:
+//    if (VERBOSE) g_print("Error: non-existent memory representation.\n");
+//    memwin->width = 4;
+//    memwin->gran  = 4;
+//    waggle_buttons(ON, ON);
+//    break;
+//  }
+//
+//max_hex_column = memwin->width / memwin->gran;
+//
+//gtk_clist_freeze(GTK_CLIST(memwin->clist_ptr));
+//                                            /* Freeze the current column list */
+//
+//if ((newvalue == MEM_REP_ASCII_MAP) || (newvalue == MEM_REP_ASCII_MAP128))
+//                               /* Abnormal settings for this exceptional case */
+//  {
+//  for (temp = MAX_HEX_ENTRY; temp >= MIN_HEX_ENTRY; temp--)
+//                                                    /* All hex to be disabled */
+//    gtk_clist_set_column_visibility(GTK_CLIST(memwin->clist_ptr), temp, FALSE);
+//  if (memwin->hex_entry != NULL) gtk_widget_hide(memwin->hex_entry);
+//                                                        /* Hide hex entry box */
+//  if (memwin->ascii_entry != NULL)
+//    gtk_widget_set_usize(memwin->ascii_entry,450,-2);/* Set ASCII column size */
+//  }
+//else                                             /* Normal hex representation */
+//  {
+//  if (memwin->hex_entry != NULL) gtk_widget_show(memwin->hex_entry);
+//                    /* Display hex entry box in case of return from ASCII map */
+//
+//  for (temp = MAX_HEX_ENTRY; temp >= MIN_HEX_ENTRY; temp--)
+//    if (temp > max_hex_column)
+//      gtk_clist_set_column_visibility(GTK_CLIST(memwin->clist_ptr), temp,FALSE);
+//                            /* Disable all columns that need not be displayed */
+//    else
+//      {  /* From top hex column e.g. 4 for 4th hex, where 0 is address column */
+//      gtk_clist_set_column_visibility(GTK_CLIST(memwin->clist_ptr), temp, TRUE);
+//                                  /* Make hex columns visible where necessary */
+//      gtk_clist_set_column_width(GTK_CLIST(memwin->clist_ptr), temp,
+//                            (memwin->width*25)/(max_hex_column)-7);
+//                                                      /*  and set their width */
+//      }
+//
+//  if (memwin->hex_entry != NULL)                 /* Set size of hex entry box */
+//    gtk_widget_set_usize(memwin->hex_entry, (memwin->width * 25), -2);
+//
+//  gtk_clist_set_column_width(GTK_CLIST(memwin->clist_ptr), ASCII_ENTRY,
+//                             memwin->width * 10); /* Set width of ASCII entry */
+//  if (memwin->ascii_entry != NULL)             /* Set size of ASCII entry box */
+//    gtk_widget_set_usize(memwin->ascii_entry, (memwin->width * 10) + 7, -2);
+//  }
+//
+//gtk_clist_thaw(GTK_CLIST(memwin->clist_ptr));
+//                                  /* Display the list as it was newly defined */
+//view_updatememwindow(memwin);                /* update the contents displayed */
 return;
 }
 
@@ -1694,28 +1694,28 @@ view_updatememwindow(memwin);  /* update the memory window that is pointed to */
 
 void callback_memwindow_size_allocate(GtkCList *clist, gpointer ignore)
 {
-int new_number_of_rows;
-mem_window *memwin;               /* Will be pointer to current memory window */
-
-if (TRACE > 5) g_print("callback_memwindow_size_allocate\n");
-memwin = view_getmemwindowptr(GTK_WIDGET(clist));
-
-                                            /* bit of calculation required... */
-new_number_of_rows = (clist->clist_window_height / clist->row_height) - 1;
-						// This is too many in large window @@@
-
-gtk_clist_freeze(GTK_CLIST(memwin->clist_ptr));
-                               /* Freeze the current state of the memory list */
-
-while (memwin->count < new_number_of_rows)            /* add rows as required */
-  gtk_clist_insert(GTK_CLIST(memwin->clist_ptr),++memwin->count,mem_column_data);
-
-while (memwin->count > new_number_of_rows)     /*  or remove rows as required */
-  gtk_clist_remove(GTK_CLIST(memwin->clist_ptr), --memwin->count);
-
-view_updatememwindow(memwin);                            /* update the window */
-gtk_clist_thaw(GTK_CLIST(memwin->clist_ptr));      /* refresh the clist state */
-
+//int new_number_of_rows;
+//mem_window *memwin;               /* Will be pointer to current memory window */
+//
+//if (TRACE > 5) g_print("callback_memwindow_size_allocate\n");
+//memwin = view_getmemwindowptr(GTK_WIDGET(clist));
+//
+//                                            /* bit of calculation required... */
+//new_number_of_rows = (clist->clist_window_height / clist->row_height) - 1;
+//						// This is too many in large window @@@
+//
+//gtk_clist_freeze(GTK_CLIST(memwin->clist_ptr));
+//                               /* Freeze the current state of the memory list */
+//
+//while (memwin->count < new_number_of_rows)            /* add rows as required */
+//  gtk_clist_insert(GTK_CLIST(memwin->clist_ptr),++memwin->count,mem_column_data);
+//
+//while (memwin->count > new_number_of_rows)     /*  or remove rows as required */
+////  gtk_clist_remove(GTK_CLIST(memwin->clist_ptr), --memwin->count);
+//
+//view_updatememwindow(memwin);                            /* update the window */
+////gtk_clist_thaw(GTK_CLIST(memwin->clist_ptr));      /* refresh the clist state */
+//
 return;
 }
 
@@ -1816,14 +1816,14 @@ if (gtk_toggle_button_get_active(tbutton))              /* currently inactive */
        //  gtk_widget_show(parameter);
        // Change to this later (if poss.) then incorporate next proc too @@@
   if (memwin->ascii_entry != NULL) gtk_widget_show(memwin->ascii_entry);
-  gtk_clist_set_column_visibility(GTK_CLIST(memwin->clist_ptr),
-                                  ASCII_ENTRY, TRUE);
+  //gtk_clist_set_column_visibility(GTK_CLIST(memwin->clist_ptr),
+  //                                ASCII_ENTRY, TRUE);
   }
 else                                                       /* already active */
   {
   if (memwin->ascii_entry != NULL) gtk_widget_hide(memwin->ascii_entry);
-  gtk_clist_set_column_visibility(GTK_CLIST(memwin->clist_ptr),
-                                  ASCII_ENTRY, FALSE);
+  //gtk_clist_set_column_visibility(GTK_CLIST(memwin->clist_ptr),
+  //                                ASCII_ENTRY, FALSE);
   }
 return;
 }
@@ -1850,14 +1850,14 @@ memwin = view_getmemwindowptr(GTK_WIDGET(tbutton));
 if (gtk_toggle_button_get_active(tbutton))              /* currently inactive */
   {
   gtk_widget_show(memwin->dis_entry);		// Protection not needed ??@@@@
-  gtk_clist_set_column_visibility(GTK_CLIST(memwin->clist_ptr),
-                                  DIS_ENTRY, TRUE);
+  //gtk_clist_set_column_visibility(GTK_CLIST(memwin->clist_ptr),
+  //                                DIS_ENTRY, TRUE);
   }
 else                                                        /* already active */
   {
   gtk_widget_hide(memwin->dis_entry);
-  gtk_clist_set_column_visibility(GTK_CLIST(memwin->clist_ptr),
-                                  DIS_ENTRY, FALSE);
+  //gtk_clist_set_column_visibility(GTK_CLIST(memwin->clist_ptr),
+  //                                DIS_ENTRY, FALSE);
   }
 return;
 }
@@ -1946,9 +1946,9 @@ else
     }
 /* ALIGNMENT ?? @@@                    */
 
-gtk_clist_select_row(GTK_CLIST(memwin->clist_ptr),
-                     next_addr_offset / memwin->width,
-                    (next_addr_offset % memwin->width) / memwin->gran + 1);
+//gtk_clist_select_row(GTK_CLIST(memwin->clist_ptr),
+//                     next_addr_offset / memwin->width,
+//                    (next_addr_offset % memwin->width) / memwin->gran + 1);
           /* highlight the appropriate row now  " + 1" to skip address column */
 return;
 }

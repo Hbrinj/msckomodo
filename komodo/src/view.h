@@ -60,7 +60,11 @@
 
 /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 
-typedef enum { COLUMN_REG, COLUMN_HEX, COLUMN_ASCII, N_COLUMN } reg_column_index;
+typedef enum { COLUMN_REG_REG, COLUMN_REG_HEX, COLUMN_REG_ASCII, N_REG_COLUMN } reg_column_index;
+
+/* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+
+typedef enum { COLUMN_MEM_ADDR, COLUMN_MEM_HEX, COLUMN_MEM_ASCII, COLUMN_MEM_SOURCE, N_MEM_COLUMN } mem_column_index;
 
 /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 
@@ -80,7 +84,7 @@ win_row_addr;
 typedef struct mem_window_name
 {
   mem_win_type type;
-  GtkWidget *clist_ptr;                            /* Pointer to the "widget" */
+  GtkWidget *treeview_ptr;                            /* Pointer to the "widget" */
   GtkWidget *address_entry;
   GtkWidget *hex_entry;                                /* the hex blank entry */
   GtkWidget *ascii_entry;                            /* the ASCII blank entry */
@@ -188,7 +192,7 @@ void        view_destroy_memorywindow(mem_window*);
 void        print_char_in_terminal(uchar, gpointer);
 void        display_status(char*);
 void        display_board_state(uchar);
-void        view_update_field(GtkCList*, int, int, char*);
+void        view_update_field(GtkTreeModel*, int, int, char*);
 char       *view_dis(uchar *, uchar *, int, GList *);
 
 

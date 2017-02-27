@@ -397,7 +397,6 @@
                     <property name="visible">True</property>
                     <property name="can_focus">False</property>
                     <property name="spacing">4</property>
-                    <property name="homogeneous">True</property>
                     <child>
                       <object class="GtkNotebook" id="kmd_main_notebook_reg">
                         <property name="visible">True</property>
@@ -466,7 +465,22 @@
                   </packing>
                 </child>
                 <child>
-                  <placeholder/>
+                  <object class="GtkFrame" id="kmd_main_frame_source">
+                    <property name="visible">True</property>
+                    <property name="can_focus">False</property>
+                    <property name="label_xalign">0</property>
+                    <property name="shadow_type">none</property>
+                    <child>
+                      <placeholder/>
+                    </child>
+                    <child type="label_item">
+                      <placeholder/>
+                    </child>
+                  </object>
+                  <packing>
+                    <property name="resize">True</property>
+                    <property name="shrink">True</property>
+                  </packing>
                 </child>
               </object>
               <packing>
@@ -475,7 +489,32 @@
               </packing>
             </child>
             <child>
-              <placeholder/>
+              <object class="GtkNotebook" id="kmd_main_notebook_output">
+                <property name="visible">True</property>
+                <property name="can_focus">True</property>
+                <child>
+                  <placeholder/>
+                </child>
+                <child type="tab">
+                  <placeholder/>
+                </child>
+                <child>
+                  <placeholder/>
+                </child>
+                <child type="tab">
+                  <placeholder/>
+                </child>
+                <child>
+                  <placeholder/>
+                </child>
+                <child type="tab">
+                  <placeholder/>
+                </child>
+              </object>
+              <packing>
+                <property name="resize">True</property>
+                <property name="shrink">True</property>
+              </packing>
             </child>
           </object>
           <packing>

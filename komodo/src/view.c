@@ -134,6 +134,9 @@ void connect_menubar_signals(GtkBuilder *);
 void create_reg_view(GtkBuilder *);
 void connect_reg_view_signals();
 void setup_reg_view(GtkBuilder *);
+void setup_mem_view(GtkBuilder *);
+void create_mem_view(GtkBuilder *);
+
 
 
 /******************************************************************************/
@@ -163,6 +166,7 @@ gtk_builder_connect_signals(builder, NULL);
 
 connect_menubar_signals(builder);
 setup_reg_view(builder);
+setup_mem_view(builder);
 
 g_object_unref(builder);
 
@@ -282,6 +286,7 @@ void connect_menubar_signals(GtkBuilder *builder)
 
 void create_reg_view(GtkBuilder *builder)
 {
+    g_print("create_reg_view");
     const target_system *_board = board;
 
     GtkListStore *temp_list;
@@ -300,35 +305,40 @@ void create_reg_view(GtkBuilder *builder)
     GtkCellRenderer *renderer = gtk_cell_renderer_text_new();
     
     // grab a handle to the notebook
-    register_notebook = GTK_NOTEBOOK(GTK_WIDGET(gtk_builder_get_object(builder, "kmd_main_notebook_reg")));
+    register_notebook = GTK_NOTEBOOK(GTK_WIDGET(gtk_builder_get_object(builder,
+                    "kmd_main_notebook_reg")));
 
 
     // -3 really hacky needs a proper work-around
     for(int i = 0; i < _board->num_regbanks -3; ++i) {
         
         regbank = &(_board->reg_banks[i]);
-        temp_regwindow = g_new(reg_window, 1);              /* Allocate window data record */
+        temp_regwindow = g_new(reg_window, 1);
         temp_regwindow->regbank_no = i;
 
         // add a new register entry
-        *regwindowlist = g_new(reg_window_entry, 1);    /* Allocate new list entry(?) */
-        (*regwindowlist)->reg_data_ptr = temp_regwindow;   /* Add window to allocated list */
+        *regwindowlist = g_new(reg_window_entry, 1); 
+        (*regwindowlist)->reg_data_ptr = temp_regwindow;
         (*regwindowlist)->next = NULL;
 
         // Point the list to the next empty slot
         regwindowlist = &((*regwindowlist)->next);
 
         // create our treeview model
-        temp_list = gtk_list_store_new(3, G_TYPE_STRING, G_TYPE_STRING, G_TYPE_STRING);
+        temp_list = gtk_list_store_new(N_REG_COLUMN,
+                G_TYPE_STRING, G_TYPE_STRING, G_TYPE_STRING);
 
         // create our treeview
         temp_treeview = gtk_tree_view_new_with_model(GTK_TREE_MODEL(temp_list));
         temp_regwindow->treeview_ptr = temp_treeview;
 
         // Create the columns
-        reg_column = gtk_tree_view_column_new_with_attributes("Reg", renderer, "text", COLUMN_REG, NULL);
-        hex_column = gtk_tree_view_column_new_with_attributes("Hex", renderer, "text", COLUMN_HEX, NULL);
-        ascii_column = gtk_tree_view_column_new_with_attributes("Ascii", renderer, "text", COLUMN_ASCII, NULL);
+        reg_column = gtk_tree_view_column_new_with_attributes("Reg",
+                renderer, "text", COLUMN_REG_REG, NULL);
+        hex_column = gtk_tree_view_column_new_with_attributes("Hex",
+                renderer, "text", COLUMN_REG_HEX, NULL);
+        ascii_column = gtk_tree_view_column_new_with_attributes("Ascii",
+                renderer, "text", COLUMN_REG_ASCII, NULL);
         gtk_tree_view_append_column(GTK_TREE_VIEW(temp_treeview), reg_column);
         gtk_tree_view_append_column(GTK_TREE_VIEW(temp_treeview), hex_column);
         gtk_tree_view_append_column(GTK_TREE_VIEW(temp_treeview), ascii_column);
@@ -341,14 +351,15 @@ void create_reg_view(GtkBuilder *builder)
         gtk_container_add(GTK_CONTAINER(scrollview), temp_treeview);
         gtk_widget_show(scrollview);
         // Add the page to the notebook
-        gint status = gtk_notebook_append_page(register_notebook,scrollview, gtk_label_new(regbank->name));
+        gint status = gtk_notebook_append_page(register_notebook,
+                scrollview, gtk_label_new(regbank->name));
 
         for(int j = 0; j < regbank->number; j++) {
             gtk_list_store_append(temp_list, &iter);
             gtk_list_store_set(temp_list, &iter,
-                    COLUMN_REG, startdata[0],
-                    COLUMN_HEX, startdata[1],
-                    COLUMN_ASCII, startdata[2],
+                    COLUMN_REG_REG, startdata[0],
+                    COLUMN_REG_HEX, startdata[1],
+                    COLUMN_REG_ASCII, startdata[2],
                     -1);
         }
         if(regbank->pointer == 0) regbank->pointer++;
@@ -369,6 +380,67 @@ void setup_reg_view(GtkBuilder *builder)
 {
     create_reg_view(builder);
     connect_reg_view_signals();
+}
+
+void setup_mem_view(GtkBuilder *builder)
+{
+    create_mem_view(builder);
+}
+
+void create_mem_view(GtkBuilder *builder)
+{
+    GtkFrame *frame = GTK_FRAME(gtk_builder_get_object(builder,
+                "kmd_main_frame_source"));
+    mem_window *memwindow;
+    GtkListStore *list;
+    GtkTreeView *treeview;
+    GtkTreeViewColumn *col_addr, *col_hex, *col_ascii, *col_source;
+    
+    //create a renderer that knows how to deal with text;
+    GtkCellRenderer *renderer = gtk_cell_renderer_text_new();
+
+    // Create a new memory window and populate it
+    memwindow = g_new(mem_window, 1);
+    memwindow->type = MEM_WIN_SOURCE;
+    memwindow->row_addresses = NULL;
+    memwindow->address = g_new0(uchar, board->memory_ptr_width);
+    memwindow->count = 1;
+    memwindow->hex_entry = NULL;
+    memwindow->ascii_entry = NULL;
+    memwindow->dis_entry = NULL;
+
+    // we only have one memory window so this is going to be NULL;
+    view_memwindowlist = g_new(mem_window_entry, 1);
+    view_memwindowlist->mem_data_ptr = memwindow;
+    view_memwindowlist->next = NULL;
+
+    // create our treeview model
+    list = gtk_list_store_new(N_MEM_COLUMN, G_TYPE_STRING,
+            G_TYPE_STRING, G_TYPE_STRING, G_TYPE_STRING);
+
+    // create our treeview
+    treeview = gtk_tree_view_new_with_model(GTK_TREE_MODEL(list));
+    memwindow->treeview_ptr = treeview;
+
+    // Create the columns
+    col_addr = gtk_tree_view_column_new_with_attributes("Address",
+            renderer, "text", COLUMN_MEM_ADDR, NULL);
+    col_hex = gtk_tree_view_column_new_with_attributes("Hex",
+            renderer, "text", COLUMN_MEM_HEX, NULL);
+    col_ascii = gtk_tree_view_column_new_with_attributes("ASCII",
+            renderer, "text", COLUMN_MEM_ASCII, NULL);
+    col_source = gtk_tree_view_column_new_with_attributes("Source",
+            renderer, "text", COLUMN_MEM_SOURCE, NULL);
+    
+    gtk_tree_view_append_column(GTK_TREE_VIEW(treeview), col_addr);
+    gtk_tree_view_append_column(GTK_TREE_VIEW(treeview), col_hex);
+    gtk_tree_view_append_column(GTK_TREE_VIEW(treeview), col_ascii);
+    gtk_tree_view_append_column(GTK_TREE_VIEW(treeview), col_source);
+    
+    
+    gtk_widget_show(GTK_WIDGET(treeview));
+    gtk_container_add(GTK_CONTAINER(frame), treeview);
+    gtk_widget_show(GTK_WIDGET(frame));
 }
 //-------------------- END REVAMPED CODE --------
 
@@ -2098,57 +2170,57 @@ g_print("TEST %d\n",event->button);
 void view_mem_display_panel(mem_window *memwindow, GtkWidget *vbox,
                             int hex_column_width,  mem_win_type type)
 {                                       /* i.e. I don't know what it does yet */
-GtkWidget *clist;
-GtkWidget *label;
-GtkWidget *scrolledwindow;
-int i;
-
-if (TRACE > 5) g_print("view_mem_display_panel\n");
-
-scrolledwindow = gtk_scrolled_window_new(NULL, NULL);
-gtk_scrolled_window_set_policy(GTK_SCROLLED_WINDOW(scrolledwindow),
-                               GTK_POLICY_NEVER, GTK_POLICY_AUTOMATIC);
-gtk_widget_show(scrolledwindow);
-gtk_box_pack_end(GTK_BOX(vbox), scrolledwindow, TRUE, TRUE, 0);
-
-clist = gtk_clist_new(TOTAL_ENTRY);       /* Total number of columns possible */
-memwindow->clist_ptr = clist;
-
-for (i = 0; i < memwindow->count; i++)                /* Put up each row (??) */
-  gtk_clist_append(GTK_CLIST(clist), mem_column_data);
-         /* `mem_column_data' declared in global.h and defined in callbacks.c */
-
-gtk_clist_set_selection_mode(GTK_CLIST(clist), GTK_SELECTION_BROWSE);
-gtk_signal_connect(GTK_OBJECT(clist), "select-row",
-                   GTK_SIGNAL_FUNC(callback_memwindow_clist),
-                   (gpointer) &zero);
-gtk_signal_connect(GTK_OBJECT(clist), "size-allocate",
-                   GTK_SIGNAL_FUNC(callback_memwindow_size_allocate),
-                   (gpointer) &zero);        /* Signal if window size changed */
-gtk_signal_connect(GTK_OBJECT(clist), "key-press-event",
-                   GTK_SIGNAL_FUNC(callback_memwindow_key_press),
-                   (gpointer) &zero); 		   
-gtk_signal_connect(GTK_OBJECT(clist), "button-press-event",
-                   GTK_SIGNAL_FUNC(callback_memwindow_button_press),
-                   (gpointer) &zero);        
-gtk_object_set_data(GTK_OBJECT(clist), "mem_window", memwindow);
-		   
-gtk_widget_show(clist);
-
-gtk_container_add(GTK_CONTAINER(scrolledwindow), clist);
-
-gtk_clist_column_titles_show(GTK_CLIST(clist));
-
-label =   column_label("Address",     clist, ADDRESS_ENTRY, 100);
-for (i = MIN_HEX_ENTRY; i <= MAX_HEX_ENTRY; i++)
-  label = column_label("Hex",         clist, i, hex_column_width);
-label =   column_label("ASCII",       clist, ASCII_ENTRY, -1);
-if (type == MEM_WIN_DUMP)
-  label = column_label("Disassembly", clist, DIS_ENTRY, -1);
-else
-  label = column_label("Source/disassembly", clist, DIS_ENTRY, -1);
-
-gtk_widget_set_style(clist, fixed_style);
+//GtkWidget *clist;
+//GtkWidget *label;
+//GtkWidget *scrolledwindow;
+//int i;
+//
+//if (TRACE > 5) g_print("view_mem_display_panel\n");
+//
+//scrolledwindow = gtk_scrolled_window_new(NULL, NULL);
+//gtk_scrolled_window_set_policy(GTK_SCROLLED_WINDOW(scrolledwindow),
+//                               GTK_POLICY_NEVER, GTK_POLICY_AUTOMATIC);
+//gtk_widget_show(scrolledwindow);
+//gtk_box_pack_end(GTK_BOX(vbox), scrolledwindow, TRUE, TRUE, 0);
+//
+//clist = gtk_clist_new(TOTAL_ENTRY);       /* Total number of columns possible */
+//memwindow->clist_ptr = clist;
+//
+//for (i = 0; i < memwindow->count; i++)                /* Put up each row (??) */
+//  gtk_clist_append(GTK_CLIST(clist), mem_column_data);
+//         /* `mem_column_data' declared in global.h and defined in callbacks.c */
+//
+//gtk_clist_set_selection_mode(GTK_CLIST(clist), GTK_SELECTION_BROWSE);
+//gtk_signal_connect(GTK_OBJECT(clist), "select-row",
+//                   GTK_SIGNAL_FUNC(callback_memwindow_clist),
+//                   (gpointer) &zero);
+//gtk_signal_connect(GTK_OBJECT(clist), "size-allocate",
+//                   GTK_SIGNAL_FUNC(callback_memwindow_size_allocate),
+//                   (gpointer) &zero);        /* Signal if window size changed */
+//gtk_signal_connect(GTK_OBJECT(clist), "key-press-event",
+//                   GTK_SIGNAL_FUNC(callback_memwindow_key_press),
+//                   (gpointer) &zero); 		   
+//gtk_signal_connect(GTK_OBJECT(clist), "button-press-event",
+//                   GTK_SIGNAL_FUNC(callback_memwindow_button_press),
+//                   (gpointer) &zero);        
+//gtk_object_set_data(GTK_OBJECT(clist), "mem_window", memwindow);
+//		   
+//gtk_widget_show(clist);
+//
+//gtk_container_add(GTK_CONTAINER(scrolledwindow), clist);
+//
+//gtk_clist_column_titles_show(GTK_CLIST(clist));
+//
+//label =   column_label("Address",     clist, ADDRESS_ENTRY, 100);
+//for (i = MIN_HEX_ENTRY; i <= MAX_HEX_ENTRY; i++)
+//  label = column_label("Hex",         clist, i, hex_column_width);
+//label =   column_label("ASCII",       clist, ASCII_ENTRY, -1);
+//if (type == MEM_WIN_DUMP)
+//  label = column_label("Disassembly", clist, DIS_ENTRY, -1);
+//else
+//  label = column_label("Source/disassembly", clist, DIS_ENTRY, -1);
+//
+//gtk_widget_set_style(clist, fixed_style);
 
 return;
 }
