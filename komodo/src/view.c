@@ -213,9 +213,10 @@ gtk_container_set_border_width(GTK_CONTAINER(top_strip), 3);
 
 gtk_box_pack_start(GTK_BOX(view_maincontainer), menubar,   FALSE, FALSE, 0);
 gtk_box_pack_start(GTK_BOX(view_maincontainer), top_strip, FALSE, FALSE, 0);
+gtk_box_pack_start(GTK_BOX(top_strip), filebar, FALSE, TRUE, 0);
 gtk_box_pack_start(GTK_BOX(top_strip), prog_ctrl, TRUE, TRUE, 0);
                                                /* add the program control bar */
-gtk_box_pack_start(GTK_BOX(top_strip), filebar, TRUE, TRUE, 0);
+//gtk_box_pack_start(GTK_BOX(top_strip), filebar, TRUE, TRUE, 0);
                                                           /* add the file bar */
 //  [JNZ `packs' status bar here] @@@
 
@@ -639,8 +640,10 @@ GtkWidget *view_create_filebar(void)
 {
   GtkWidget *hbox;
   GtkWidget *vbox;
+  GtkWidget *separator;
   GtkWidget *button_compile;
   GtkWidget *button_load;
+  GtkWidget *button_reload;
   GtkWidget *button_findcompile;
   GtkWidget *button_findload;
   GtkWidget *fileselection;
@@ -716,19 +719,27 @@ GtkWidget *view_create_filebar(void)
 /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 
 if (TRACE > 5) g_print("view_create_filebar\n");
-
-vbox = new_box(FALSE, 2, VERTICAL);
-hbox = new_box(FALSE, 4, HORIZONTAL);
-gtk_box_pack_start(GTK_BOX(vbox), hbox, FALSE, FALSE, 0);
+GtkWidget *hbox1 = new_box(FALSE, 2, HORIZONTAL);
+vbox = new_box(TRUE, 2, VERTICAL);
+gtk_box_pack_start(GTK_BOX(hbox1), vbox, FALSE, FALSE, 4);
+//hbox = new_box(TRUE, 4, HORIZONTAL);
+//gtk_box_pack_start(GTK_BOX(vbox), hbox, FALSE, FALSE, 0);
 
 //button_compile = push_button("Compile ->", hbox, FALSE, FALSE, 4);
 //centry_compile = filebar_combo(button_compile, callback_button_compile, hbox);
 
 //button_findcompile = push_button("Browse...", hbox, FALSE, FALSE, 0);
 
-hbox = new_box(FALSE, 4, HORIZONTAL);
+button_load = push_button("Open", vbox, FALSE, FALSE, 2);
 
-button_load = push_button("Open", hbox, FALSE, FALSE, 4);
+button_reload = push_button("Reload", vbox, FALSE, FALSE, 2);
+
+separator = gtk_vseparator_new();
+gtk_widget_show(separator);
+hbox = new_box(FALSE, 4, HORIZONTAL);
+gtk_box_pack_start(GTK_BOX(hbox), separator, FALSE, FALSE, 0);
+gtk_box_pack_start(GTK_BOX(hbox1), hbox, FALSE, FALSE, 0);
+
 //centry_load = filebar_combo(button_load, callback_button_load, hbox);
 
 //button_findload = push_button("Browse...", hbox, FALSE, FALSE, 0);
@@ -792,7 +803,7 @@ gtk_signal_connect_after(GTK_OBJECT(view_binary_load_address), "changed",
                           GTK_SIGNAL_FUNC(callback_load_binary_address),
                           GTK_OBJECT(label));
 
-gtk_box_pack_start(GTK_BOX(vbox), hbox, FALSE, FALSE, 0);
+//gtk_box_pack_start(GTK_BOX(vbox), hbox, FALSE, FALSE, 0);
 
                         /* These are the two file selection satellite windows */
 //fileselection = filebar_browser("Select Source File",
@@ -805,7 +816,7 @@ fileselection = filebar_browser("Select Source/Object File",
                                 GTK_OBJECT(button_load),
                                 centry_load);
 
-return vbox;
+return hbox1; // vbox;
 }
 
 /*                                                                            */
@@ -1402,6 +1413,8 @@ GtkWidget *view_create_prog_ctrl(void)
 GtkAccelGroup *accel_group = gtk_accel_group_new ();
 GtkWidget *hbox;
 GtkWidget *vbox;
+GtkWidget *separator;
+GtkWidget *button_ping;
 GtkWidget *button_start;
 GtkWidget *button_stop;
 GtkWidget *button_single;
@@ -1419,11 +1432,12 @@ GtkWidget *button_feature;
                                      callback_button_go_fn function,
                                      gpointer parameter,
                                      guint accelerator,
-                                     char *tip)
+                                     char *tip,
+                                     GtkWidget *box)
   {
   GtkWidget *handle;
 
-  handle = push_button(string, hbox, FALSE, FALSE, 0);
+  handle = push_button(string, box, FALSE, FALSE, 0);
   gtk_signal_connect(GTK_OBJECT(handle), "clicked",
                      GTK_SIGNAL_FUNC(function), parameter);
   if (tip[0] != '\0') gtk_tooltips_set_tip(view_tooltips, handle, tip, NULL);
@@ -1439,7 +1453,8 @@ GtkWidget *button_feature;
                                        callback_button_go_fn function,
                                        gpointer parameter,
                                        char *tip,
-                                       int active)
+                                       int active,
+                                       GtkWidget *box)
   {
   GtkWidget *handle;
 
@@ -1447,7 +1462,7 @@ GtkWidget *button_feature;
   gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(handle), active);
   gtk_widget_ref(handle);
   gtk_widget_show(handle);
-  gtk_box_pack_start(GTK_BOX(hbox), handle, FALSE, FALSE, 0);
+  gtk_box_pack_start(GTK_BOX(box), handle, FALSE, FALSE, 0);
   gtk_signal_connect(GTK_OBJECT(handle), "toggled", function, parameter);
   if (tip[0] != '\0') gtk_tooltips_set_tip(view_tooltips, handle, tip, NULL);
   return handle;
@@ -1456,7 +1471,8 @@ GtkWidget *button_feature;
 /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 
   void create_ctrl_spin_button(int initial, int min, int max,
-                               int *parameter, char *tip)
+                               int *parameter, char *tip,
+                               GtkWidget * box)
   {
   GtkObject *handle1;
   GtkWidget *handle2;
@@ -1465,7 +1481,7 @@ GtkWidget *button_feature;
   handle2 = gtk_spin_button_new(GTK_ADJUSTMENT(handle1), 1, 0);
   gtk_widget_ref(handle2);
   gtk_widget_show(handle2);
-  gtk_box_pack_start(GTK_BOX(hbox), handle2, TRUE, TRUE, 0);
+  gtk_box_pack_start(GTK_BOX(box), handle2, TRUE, TRUE, 0);
   gtk_signal_connect(GTK_OBJECT(handle2), "changed",
                      GTK_SIGNAL_FUNC(callback_step_number),
                      parameter);
@@ -1477,62 +1493,70 @@ GtkWidget *button_feature;
 /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 
 if (TRACE > 5) g_print("view_create_prog_ctrl\n");
+GtkWidget *hbox1 = new_box(FALSE, 4, HORIZONTAL);
 
 vbox = new_box(FALSE, 2, VERTICAL);
+//gtk_box_pack_start (GTK_BOX (hbox1), vbox, FALSE, FALSE, 0);
 
 hbox = new_box(FALSE, 4, HORIZONTAL);
-
-button_start = create_ctrl_push_button("Ping",
+button_ping = create_ctrl_push_button("Ping",
                                         GTK_SIGNAL_FUNC(callback_button_ping),
                                         NULL, 0,
-                                       "Ping board and refresh display");
+                                       "Ping board and refresh display",
+                                       hbox);
+gtk_box_pack_start (GTK_BOX (hbox1), hbox, FALSE, FALSE, 0);
+
+separator = gtk_vseparator_new();
+hbox = new_box(FALSE, 4, HORIZONTAL);
+gtk_widget_show(separator);
+gtk_box_pack_start(GTK_BOX(hbox), separator, FALSE, FALSE, 0);
+gtk_box_pack_start(GTK_BOX(hbox1), hbox, FALSE, FALSE, 0);
+
+
+button_feature = push_button("Features", hbox, FALSE, FALSE, 0);
+gtk_tooltips_set_tip (view_tooltips, button_feature, "Features Available",
+                      NULL);
+gtk_signal_connect_object (GTK_OBJECT (button_feature), "clicked",
+                           gtk_widget_show, GTK_OBJECT (window_feature));
+
+separator = gtk_vseparator_new();
+hbox = new_box(FALSE, 0, HORIZONTAL);
+gtk_widget_show(separator);
+gtk_box_pack_start(GTK_BOX(hbox), separator, FALSE, FALSE, 0);
+gtk_box_pack_start(GTK_BOX(hbox1), hbox, FALSE, FALSE, 0);
+
+
+vbox = new_box(FALSE, 2, VERTICAL);
+hbox = new_box(FALSE, 4, HORIZONTAL);
+gtk_box_pack_start(GTK_BOX(vbox), hbox, FALSE, FALSE, 0);
+gtk_box_pack_start(GTK_BOX(hbox1), vbox, FALSE, FALSE, 0);
+    
 
 button_start = create_ctrl_push_button("Run",
                                        GTK_SIGNAL_FUNC(callback_button_start),
                                       (gpointer) &zero, GDK_F5,
-                                      "Start execution [F5]");
+                                      "Start execution [F5]",
+                                      hbox);
 
-button_stop  = create_ctrl_push_button("Stop",
+button_stop  = create_ctrl_push_button("Pause",
                                         GTK_SIGNAL_FUNC(callback_button_stop),
                                         NULL, GDK_F6,
-                                       "Stop execution [F6]");
+                                       "Stop execution [F6]",
+                                       hbox);
 
 button_multi = create_ctrl_push_button("Continue",
                                         GTK_SIGNAL_FUNC(callback_button_continue),
                                         NULL, GDK_F10,
-                                       "Continue execution [F10]");
+                                       "Continue execution [F10]",
+                                       hbox);
+hbox = new_box(FALSE, 4, HORIZONTAL);
+gtk_box_pack_start(GTK_BOX(vbox), hbox, FALSE, FALSE, 0);
 
 button_start = create_ctrl_push_button("Reset",
                                         GTK_SIGNAL_FUNC(callback_button_reset),
                                         NULL, 0,
-                                       "Reset client");
-
-button_single= create_ctrl_push_button("Single-Step",
-                                        GTK_SIGNAL_FUNC(callback_button_start),
-                                       (gpointer) &one, GDK_F7,
-                                       "Take one step [F7]");
-
-create_ctrl_spin_button(1, 1, 1000000, &view_step_number,
-                       "Change number of steps to take.\n"
-                       "Remember to press return after entering a new value");
-                                                   /* Max. -was- much greater */
-
-button_multi = create_ctrl_push_button("Multi-Step",
-                                        GTK_SIGNAL_FUNC(callback_button_start),
-                                       (gpointer) &view_step_number, GDK_F8,
-                                       "Take a number of steps [F8]");
-
-create_ctrl_spin_button(1000, 1, 10000, &view_step_freq,
-                       "Change period (ms) between steps when walking.\n"
-                       "Remember to press return after entering a new value");
-
-button_multi = create_ctrl_push_button("Walk",
-                                        GTK_SIGNAL_FUNC(callback_button_walk),
-                                       (gpointer) &view_step_number, GDK_F9,
-                                       "Repeatedly take a number of steps [F9]");
-
-view_step_number = 1;
-view_step_freq = 1000;
+                                       "Reset client",
+                                       hbox);
 
 cbutton_proc = gtk_toggle_button_new_with_label ("Refresh");
 gtk_toggle_button_set_active (GTK_TOGGLE_BUTTON (cbutton_proc), FALSE);
@@ -1545,67 +1569,139 @@ gtk_tooltips_set_tip (view_tooltips, cbutton_proc,
                       "Refresh screen regularly", NULL);
 view_refreshbutton = cbutton_proc;
 
-gtk_box_pack_start (GTK_BOX (vbox), hbox, FALSE, FALSE, 0);
 
+
+
+separator = gtk_vseparator_new();
 hbox = new_box(FALSE, 4, HORIZONTAL);
+gtk_widget_show(separator);
+gtk_box_pack_start(GTK_BOX(hbox), separator, FALSE, FALSE, 0);
+gtk_box_pack_start(GTK_BOX(hbox1), hbox, FALSE, FALSE, 0);
 
-button_feature = push_button("Features", hbox, FALSE, FALSE, 0);
-gtk_tooltips_set_tip (view_tooltips, button_feature, "Features Available",
-                      NULL);
-gtk_signal_connect_object (GTK_OBJECT (button_feature), "clicked",
-                           gtk_widget_show, GTK_OBJECT (window_feature));
+vbox = new_box(FALSE, 2, VERTICAL);
+hbox = new_box(FALSE, 4, HORIZONTAL);
+gtk_box_pack_start(GTK_BOX(hbox), vbox, FALSE, FALSE, 0);
+gtk_box_pack_start(GTK_BOX(hbox1), hbox, FALSE, FALSE, 0);
+
+button_single= create_ctrl_push_button("Single-Step",
+                                        GTK_SIGNAL_FUNC(callback_button_start),
+                                       (gpointer) &one, GDK_F7,
+                                       "Take one step [F7]",
+                                       vbox);
+
+GtkWidget *derp = new_box(FALSE, 4, HORIZONTAL);
+gtk_box_pack_start(GTK_BOX(vbox), derp, FALSE, FALSE, 0);
 
 cbutton_break = create_ctrl_toggle_button("Breakpoints",
                                   GTK_SIGNAL_FUNC(callback_start_toggle),
                                   GINT_TO_POINTER(0x10),
                                  "Activate breakpoints",
-                                  test_run_flag(RUN_FLAG_BREAK));
+                                  test_run_flag(RUN_FLAG_BREAK),
+                                  derp);
 
 cbutton_break = create_ctrl_toggle_button("Watchpoints",
                                   GTK_SIGNAL_FUNC(callback_start_toggle),
                                   GINT_TO_POINTER(0x20),
                                  "Activate watchpoints",
-                                  test_run_flag(RUN_FLAG_WATCH));
+                                  test_run_flag(RUN_FLAG_WATCH),
+                                  derp);
 
-label = status_message("          Service:", hbox, FALSE, FALSE, 0);
+
+vbox = new_box(TRUE, 2, VERTICAL);
+hbox = new_box(TRUE, 4, HORIZONTAL);
+gtk_box_pack_start(GTK_BOX(vbox), hbox, FALSE, TRUE, 0);
+gtk_box_pack_start(GTK_BOX(hbox1), vbox, FALSE, TRUE, 0);
+
+button_multi = create_ctrl_push_button("Multi-Step",
+                                        GTK_SIGNAL_FUNC(callback_button_start),
+                                       (gpointer) &view_step_number, GDK_F8,
+                                       "Take a number of steps [F8]",
+                                       hbox);
+create_ctrl_spin_button(1, 1, 1000000, &view_step_number,
+                       "Change number of steps to take.\n"
+                       "Remember to press return after entering a new value",
+                        hbox);
+                                                   /* Max. -was- much greater */
+
+hbox = new_box(FALSE, 4, HORIZONTAL);
+gtk_box_pack_start(GTK_BOX(vbox), hbox, FALSE, FALSE, 0);
+
+
+button_multi = create_ctrl_push_button("Walk",
+                                        GTK_SIGNAL_FUNC(callback_button_walk),
+                                       (gpointer) &view_step_number, GDK_F9,
+                                       "Repeatedly take a number of steps [F9]",
+                                       hbox);
+create_ctrl_spin_button(1000, 1, 10000, &view_step_freq,
+                       "Change period (ms) between steps when walking.\n"
+                       "Remember to press return after entering a new value",
+                       hbox);
+
+
+vbox = new_box(FALSE, 2, VERTICAL);
+hbox = new_box(FALSE, 4, HORIZONTAL);
+gtk_box_pack_start(GTK_BOX(vbox), hbox, FALSE, FALSE, 0);
+gtk_box_pack_start(GTK_BOX(hbox1), vbox, FALSE, FALSE, 0);
+
+view_step_number = 1;
+view_step_freq = 1000;
+
+separator = gtk_vseparator_new();
+hbox = new_box(FALSE, 4, HORIZONTAL);
+gtk_widget_show(separator);
+gtk_box_pack_start(GTK_BOX(hbox), separator, FALSE, FALSE, 0);
+gtk_box_pack_start(GTK_BOX(hbox1), hbox, FALSE, FALSE, 0);
+
+vbox = new_box(FALSE, 2, VERTICAL);
+hbox = new_box(FALSE, 4, HORIZONTAL);
+gtk_box_pack_start(GTK_BOX(vbox), hbox, FALSE, FALSE, 0);
+gtk_box_pack_start(GTK_BOX(hbox1), vbox, FALSE, FALSE, 0);
+
+label = status_message("Service:", hbox, FALSE, FALSE, 0);
 
 cbutton_swi   = create_ctrl_toggle_button("SWI",
                                   GTK_SIGNAL_FUNC(callback_start_toggle),
                                   GINT_TO_POINTER(0x04),
                                  "Enter software interrupt code",
-                                  test_run_flag(RUN_FLAG_SWI));
+                                  test_run_flag(RUN_FLAG_SWI),
+                                  hbox);
 
 cbutton_proc  = create_ctrl_toggle_button("BL",
                                   GTK_SIGNAL_FUNC(callback_start_toggle),
                                   GINT_TO_POINTER(0x02),
                                  "Enter sub-procedure code",
-                                  test_run_flag(RUN_FLAG_BL));
+                                  test_run_flag(RUN_FLAG_BL),
+                                  hbox);
 
 cbutton_proc  = create_ctrl_toggle_button("Abort",
                                   GTK_SIGNAL_FUNC(callback_start_toggle),
                                   GINT_TO_POINTER(0x08),
                                  "Enter Bad Memory access exception code",
-                                  test_run_flag(RUN_FLAG_ABORT));
+                                  test_run_flag(RUN_FLAG_ABORT),
+                                  hbox);
 
-label = status_message("          Active:", hbox, FALSE, FALSE, 0);
+hbox = new_box(FALSE, 4, HORIZONTAL);
+gtk_box_pack_start(GTK_BOX(vbox), hbox, FALSE, FALSE, 0);
+
+label = status_message("Active:", hbox, FALSE, FALSE, 0);
 
 cbutton_proc  = create_ctrl_toggle_button("IRQ",
                                  GTK_SIGNAL_FUNC(callback_rtf_toggle),
                                  GINT_TO_POINTER(0x02),
                                 "Activate automatic execution of interrupt code",
-                                 FALSE);
+                                 FALSE,
+                                 hbox);
 
 cbutton_proc  = create_ctrl_toggle_button("FIQ",
                                  GTK_SIGNAL_FUNC(callback_rtf_toggle),
                                  GINT_TO_POINTER(0x01),
                                 "Activate automatic execution of FIQ code",
-                                 FALSE);
-
-gtk_box_pack_start(GTK_BOX(vbox), hbox, FALSE, FALSE, 0);
+                                 FALSE,
+                                 hbox);
 
 gtk_window_add_accel_group(GTK_WINDOW(view_mainwindow), accel_group);
 
-return vbox;
+return hbox1;
 }
 
 /*                                                                            */
