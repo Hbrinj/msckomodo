@@ -3,3 +3,4 @@ flash
 kmd
 *.err
 *.swp
+*.deps/*
