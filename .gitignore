@@ -3,4 +3,6 @@ flash
 kmd
 *.err
 *.swp
-*.deps/*
+*.deps*
+*.log
+
