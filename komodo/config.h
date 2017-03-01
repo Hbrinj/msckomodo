@@ -17,7 +17,7 @@
 /* #undef SERIAL_PORT */
 /* #undef EMULATOR_PROG */
 /* #undef SETUP_DIR */
-#define DATE "21/02/2017"
+#define DATE "01/03/2017"
 #define YEAR "2017"
 /* #undef SIMPLE_INTERFACE */
 /* #undef USE_INTERNAL */

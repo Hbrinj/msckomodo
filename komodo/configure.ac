@@ -26,8 +26,8 @@ AC_ARG_ENABLE(wall,             [  --enable-wall                Compile giving a
 AC_DEFINE_UNQUOTED(DATE,"$(date +%d/%m/%Y)")
 AC_DEFINE_UNQUOTED(YEAR,"$(date +%Y)")
 
-PKG_CHECK_MODULES(GLIB, glib-2.0 >= 2.5.0)
-PKG_CHECK_MODULES(GTK, gtk+-3.0)
+PKG_CHECK_MODULES(GLIB, glib > 1.2.0)
+PKG_CHECK_MODULES(GTK, gtk+)
 dnl AM_PATH_GLIB_2_0(2.5.0)
     
 dnl AM_PATH_GTK_3_0(3.22.0) 

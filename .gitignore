@@ -1,0 +1,6 @@
+*.o
+flash
+kmd
+*.err
+*.swp
+*.deps/*
