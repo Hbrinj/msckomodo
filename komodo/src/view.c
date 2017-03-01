@@ -721,17 +721,17 @@ vbox = new_box(FALSE, 2, VERTICAL);
 hbox = new_box(FALSE, 4, HORIZONTAL);
 gtk_box_pack_start(GTK_BOX(vbox), hbox, FALSE, FALSE, 0);
 
-button_compile = push_button("Compile ->", hbox, FALSE, FALSE, 4);
-centry_compile = filebar_combo(button_compile, callback_button_compile, hbox);
+//button_compile = push_button("Compile ->", hbox, FALSE, FALSE, 4);
+//centry_compile = filebar_combo(button_compile, callback_button_compile, hbox);
 
-button_findcompile = push_button("Browse...", hbox, FALSE, FALSE, 0);
+//button_findcompile = push_button("Browse...", hbox, FALSE, FALSE, 0);
 
 hbox = new_box(FALSE, 4, HORIZONTAL);
 
-button_load = push_button("Load ->", hbox, FALSE, FALSE, 4);
-centry_load = filebar_combo(button_load, callback_button_load, hbox);
+button_load = push_button("Open", hbox, FALSE, FALSE, 4);
+//centry_load = filebar_combo(button_load, callback_button_load, hbox);
 
-button_findload = push_button("Browse...", hbox, FALSE, FALSE, 0);
+//button_findload = push_button("Browse...", hbox, FALSE, FALSE, 0);
 
 view_fileerror = gtk_dialog_new();
 gtk_object_set_data(GTK_OBJECT(view_fileerror), "view_fileerror",
@@ -795,14 +795,14 @@ gtk_signal_connect_after(GTK_OBJECT(view_binary_load_address), "changed",
 gtk_box_pack_start(GTK_BOX(vbox), hbox, FALSE, FALSE, 0);
 
                         /* These are the two file selection satellite windows */
-fileselection = filebar_browser("Select Source File",
-                                ("*" SOURCE_EXT),      /* Concatenate strings */
-                                GTK_OBJECT(button_findcompile),
-                                centry_compile);
+//fileselection = filebar_browser("Select Source File",
+//                                ("*" SOURCE_EXT ", *" OBJECT_EXT),      /* Concatenate strings */
+//                                GTK_OBJECT(button_findcompile),
+//                                centry_compile);
 
-fileselection = filebar_browser("Select Object File",
-                                ("*" OBJECT_EXT),      /* Concatenate strings */
-                                GTK_OBJECT(button_findload),
+fileselection = filebar_browser("Select Source/Object File",
+                                ("*" OBJECT_EXT ", *" SOURCE_EXT),      /* Concatenate strings */
+                                GTK_OBJECT(button_load),
                                 centry_load);
 
 return vbox;

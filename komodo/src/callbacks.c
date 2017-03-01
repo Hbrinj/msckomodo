@@ -922,8 +922,9 @@ if (TRACE > 5) g_print("callback_button_ok_file\n");
 
 text = gtk_file_selection_get_filename(GTK_FILE_SELECTION
                                   (GTK_WIDGET(button)->parent->parent->parent));
-gtk_editable_delete_text(GTK_EDITABLE(entry), 0, -1);          /* clear entry */
-gtk_entry_append_text(GTK_ENTRY(entry), text);             /* insert new text */
+g_print(text);
+//gtk_editable_delete_text(GTK_EDITABLE(entry), 0, -1);          /* clear entry */
+//gtk_entry_append_text(GTK_ENTRY(entry), text);             /* insert new text */
 return;
 }
 
