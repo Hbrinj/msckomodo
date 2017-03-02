@@ -45,6 +45,8 @@ void callback_load_binary_address(GtkEntry*, gpointer);
 void callback_load_binary(GtkButton*, gpointer);
 void callback_button_compile(GtkButton*, gpointer);
 void callback_button_ok_file(GtkButton*, gpointer);
+void callback_button_open_file(GtkButton*, gpointer);
+void callback_button_reload_file(GtkButton*, gpointer);
 void callback_fpgaerase(GtkButton*, gpointer);
                                      /* Called in features when erase pressed */
 void callback_fpgaload(GtkButton*, gpointer);

@@ -190,7 +190,7 @@ target_type;
 char *rcfile;                  /* The name of the file to be opened - .komodo */
 boolean use_internal;                                     /* ... config. file */
 boolean VERBOSE;                            /* Be loud and informative or not */
-
+char * source_filename;                       /* where the compiled source is */
 GtkStyle *fixed_style;
 
 target_type interface_type;/* Indicates what board/virtual board we work with */

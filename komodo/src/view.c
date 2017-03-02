@@ -462,10 +462,10 @@ file_submenu = gtk_menu_new ();                               /* file submenu */
 /* note: the following entries that are left out can be activated and diverted*/
 /* to the appropriate callbacks  EH???                                        */
 
-load    = create_submenu_entry(file_submenu, "Load file          ",
-                               callback_button_load, centry_load);
-compile = create_submenu_entry(file_submenu, "Compile file",
-                               callback_button_compile, centry_compile);
+//load    = create_submenu_entry(file_submenu, "Load file          ",
+//                               callback_button_load, centry_load);
+//compile = create_submenu_entry(file_submenu, "Compile file",
+//                               callback_button_compile, centry_compile);
 
 separator = view_separator(GTK_MENU(file_submenu));
 
@@ -712,7 +712,7 @@ GtkWidget *view_create_filebar(void)
                             GTK_SIGNAL_FUNC(gtk_widget_hide),
                             GTK_OBJECT(handle));
   gtk_signal_connect(GTK_OBJECT(ok_button), "clicked",
-                     GTK_SIGNAL_FUNC(callback_button_ok_file), parameter);
+                     GTK_SIGNAL_FUNC(callback_button_open_file), parameter);
   return handle;
   }
 
@@ -733,6 +733,8 @@ gtk_box_pack_start(GTK_BOX(hbox1), vbox, FALSE, FALSE, 4);
 button_load = push_button("Open", vbox, FALSE, FALSE, 2);
 
 button_reload = push_button("Reload", vbox, FALSE, FALSE, 2);
+gtk_signal_connect(GTK_OBJECT(button_reload), "clicked",    /* If reload pressed, load */
+                    GTK_SIGNAL_FUNC(callback_button_reload_file), NULL);
 
 separator = gtk_vseparator_new();
 gtk_widget_show(separator);

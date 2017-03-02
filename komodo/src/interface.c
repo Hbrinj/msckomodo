@@ -1087,9 +1087,9 @@ use_internal = USE_INTERNAL;
 switch (commandline(argc, argv))                     /* process the arguments */
   {
   case COMMANDLINE_CONTINUE:           break;
-  case COMMANDLINE_TERMINATE: exit(0); break;
-  case COMMANDLINE_ERROR:     exit(1); break;
-  default: fprintf(stderr, "Command parser failed\n"); exit(1); break;
+  //case COMMANDLINE_TERMINATE: exit(0); break;
+  //case COMMANDLINE_ERROR:     exit(1); break;
+  default: fprintf(stderr, "Command parser failed\n"); //exit(1); break;
   }
 
 gtk_init(&argc, &argv);                    /* Initialise GTK (user interface) */

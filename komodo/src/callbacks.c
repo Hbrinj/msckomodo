@@ -81,7 +81,7 @@ const SECTION_LIST_SIZE = sizeof(elf_section_list);
 /* Non-exported prototypes                                                    */
 
 int     ID_file_type(char*);                      /* Identify input file type */
-void    load_data(gpointer, int, char*);      /* Load data of designated type */
+void    load_data(char* , int, char*);      /* Load data of designated type */
 boolean read_elf(char*);
 void elf_header(FILE*, unsigned int*, unsigned int*, unsigned int*);
 void elf_list_sections(FILE*, unsigned int, unsigned int, elf_section_list**);
@@ -136,7 +136,7 @@ void callback_button_load(GtkButton *button, gpointer entry)
 
 if (TRACE > 5) g_print("callback_button_load\n");
 
-load_data(entry, FILE_UNKNOWN, NULL);
+  load_data(gtk_entry_get_text(GTK_ENTRY(entry)), FILE_UNKNOWN, NULL);
 return;
 }
 
@@ -193,7 +193,7 @@ text = gtk_editable_get_chars(GTK_EDITABLE(view_binary_load_address), 0, -1);
 
 if (view_hexstr2chararr(board->memory_ptr_width, text, address))
   {
-  load_data(entry, FILE_BIN, address);
+  load_data(gtk_entry_get_text(GTK_ENTRY(entry)), FILE_BIN, address);
   gtk_widget_hide(view_fileerror);
   }
 
@@ -222,10 +222,9 @@ return file_type;
 /*----------------------------------------------------------------------------*/
 /* `file_type' and `address' specified for pure binary loads                  */
 
-void load_data(gpointer entry, int file_type, char *address)
+void load_data(char* filename, int file_type, char *address)
 {
 unsigned int old_symbol_count;
-char *filename;
 int error;                    // Enumerate @@@
 
 if (load_lock == FREE)                  /* if nothing else is already loading */
@@ -233,7 +232,6 @@ if (load_lock == FREE)                  /* if nothing else is already loading */
   load_lock = LOAD;                                               /* Set lock */
 
   error = -1;
-  filename = gtk_entry_get_text(GTK_ENTRY(entry)); /* Get pointer to filename */
 
   if (file_type == FILE_UNKNOWN) file_type = ID_file_type(filename);
 
@@ -254,7 +252,7 @@ if (load_lock == FREE)                  /* if nothing else is already loading */
     default: g_print("\a"); break;   /* Simple indication of "File not found" */
     }
 
-  if (error == 0) maintain_filename_list(entry, filename, TRUE);   /* If okay */
+  //if (error == 0) maintain_filename_list(entry, filename, TRUE);   /* If okay */
   callback_memory_refresh();                                   /* Refresh all */
   view_refresh_symbol_clists(old_symbol_count, misc_count_symbols());
                                            /* Update any symbol table windows */
@@ -848,23 +846,23 @@ return TRUE;						// Return error flag  @@@
 
 /******************************************************************************/
 /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
-/*  Compiles a file when compile is pressed                                   */
+/*  Compiles a file                                                           */
 /*                                                                            */
 
-void callback_button_compile(GtkButton *button, gpointer entry)
+void compile_file(char *filename)
 {
 GList *list;
-char *filename;
+int status;
+int childpid;
 
 if (TRACE > 5) g_print("callback_button_compile\n");
 
 if (compile_lock == FREE)                       /* Check if already compiling */
   {							// Busy-wait ?? @@@@
   compile_lock = COMPILE;                                         /* set lock */
-  filename = gtk_entry_get_text(GTK_ENTRY(entry));  /* Get ptr; no allocation */
   if (filename[0] != '\0')
     {
-    if (!fork())                                           /* If daughter ... */
+    if (!(childpid = fork()))                                           /* If daughter ... */
       {
       close(1);
       dup2(compile_communication[1], 1);
@@ -882,7 +880,7 @@ if (compile_lock == FREE)                       /* Check if already compiling */
       char buffer[200];
       char *pTemp1, *pTemp2;
 
-      maintain_filename_list(entry, filename, TRUE);     /* Log filename used */
+      //maintain_filename_list(entry, filename, TRUE);     /* Log filename used */
 
       pTemp1 = g_strdup(filename);         /* Translate filename to load name */
       if (pTemp1 != NULL)
@@ -891,11 +889,13 @@ if (compile_lock == FREE)                       /* Check if already compiling */
                             /* Reverse search for start of extension - if any */
         if (pTemp1[i] == '.') pTemp1[i] = '\0';/* Trim off any ".*" extension */
 
-        pTemp2 = g_strconcat(pTemp1, OBJECT_EXT, NULL);		// @@@ re-extend properly @@@
-        gtk_entry_set_text(GTK_ENTRY(centry_load), pTemp2);
+        pTemp2 = g_strconcat(pTemp1, OBJECT_EXT, NULL);		// @@@ re-extend properly @@@i
+        source_filename = g_strdup(pTemp2);
+        //gtk_entry_set_text(GTK_ENTRY(centry_load), pTemp2);
         g_free(pTemp2);
         }
       g_free(pTemp1);
+      waitpid(childpid, &status, 0);
       }
     }
   else g_print("\a");                                   /* Warning of failure */
@@ -903,6 +903,24 @@ if (compile_lock == FREE)                       /* Check if already compiling */
   }
 return;
 }
+
+void load_source(const char* file) {
+    char *pTemp1, *pTemp2;
+    int i;
+    for (i=strlen(file); (i>0) && (file[i]!='/') && (file[i]!='.'); i--);
+    
+    if(strncmp(&file[i], OBJECT_EXT, 4) != 0) {
+        compile_file(file);
+    }
+
+    pTemp1 = g_strdup(file);
+    if (pTemp1[i] == '.') pTemp1[i] = '\0';/* Trim off any ".*" extension */
+
+    pTemp2 = g_strconcat(pTemp1, OBJECT_EXT, NULL);		// @@@ re-extend properly @@@i
+
+    load_data(pTemp2, FILE_UNKNOWN, NULL);
+}
+
 
 /*                                                                            */
 /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
@@ -914,6 +932,24 @@ return;
 /* Confirms a file choice.                                                    */
 /*                                                                            */
 
+void callback_button_open_file(GtkButton *button, gpointer entry)
+{
+    char *text;
+
+    if (TRACE > 5) g_print("callback_button_ok_file\n");
+
+    text = gtk_file_selection_get_filename(GTK_FILE_SELECTION
+                                      (GTK_WIDGET(button)->parent->parent->parent));
+    source_filename = text;
+    load_source(text);
+
+    g_print(text);
+}
+
+void callback_button_reload_file(GtkButton *button, gpointer entry) {
+    load_source(source_filename);
+}
+
 void callback_button_ok_file(GtkButton *button, gpointer entry)
 {                                /* on fileentry ok button send to text entry */
 char *text;
@@ -923,6 +959,7 @@ if (TRACE > 5) g_print("callback_button_ok_file\n");
 text = gtk_file_selection_get_filename(GTK_FILE_SELECTION
                                   (GTK_WIDGET(button)->parent->parent->parent));
 g_print(text);
+
 //gtk_editable_delete_text(GTK_EDITABLE(entry), 0, -1);          /* clear entry */
 //gtk_entry_append_text(GTK_ENTRY(entry), text);             /* insert new text */
 return;
