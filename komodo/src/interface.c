@@ -1003,7 +1003,7 @@ void init_global_vars(void)
 
 spsr_exists = TRUE;  /*indicates whether SPSR register is currently displayed */
 all_flag_windows_have_been_created = FALSE;
-
+source_filename = NULL;
 return;
 }
 

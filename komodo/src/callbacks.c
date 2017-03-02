@@ -907,6 +907,7 @@ return;
 void load_source(const char* file) {
     char *pTemp1, *pTemp2;
     int i;
+    if(file[0] == '\0') return;
     for (i=strlen(file); (i>0) && (file[i]!='/') && (file[i]!='.'); i--);
     
     if(strncmp(&file[i], OBJECT_EXT, 4) != 0) {
@@ -947,6 +948,7 @@ void callback_button_open_file(GtkButton *button, gpointer entry)
 }
 
 void callback_button_reload_file(GtkButton *button, gpointer entry) {
+    if(source_filename == NULL) return;
     load_source(source_filename);
 }
 
