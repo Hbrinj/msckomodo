@@ -55,14 +55,14 @@ void callback_fpgaupdate(GtkButton*, gpointer);
                                     /* Called in features when update pressed */
 
 void callback_button_start(GtkButton*, gpointer);
-void callback_button_stop(GtkButton*, gpointer);
+void callback_button_pause(GtkButton*, gpointer);
 void callback_button_walk(GtkButton*, gpointer);
 void callback_button_continue(GtkButton*, gpointer);
 void callback_button_ping(GtkButton*, gpointer);
 void callback_start_toggle(GtkToggleButton*, gpointer);
 void callback_rtf_toggle(GtkToggleButton*, gpointer);
 void callback_refresh_toggle(GtkToggleButton*, gpointer);
-void callback_button_reset(GtkButton*, gpointer);
+void callback_button_stop(GtkButton*, gpointer);
 void callback_refresh_selection(int, int, int);
 void callback_global_refresh(void);
 void callback_step_number(GtkEditable*, gpointer);

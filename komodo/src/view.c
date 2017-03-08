@@ -464,18 +464,18 @@ multi_step_as_below = create_submenu_entry(multi_step_submenu,
 
 separator           = view_separator(GTK_MENU (multi_step_submenu));
 
-multi_step_10       = create_submenu_entry(multi_step_submenu, "10 steps",
-                           callback_button_start, (gpointer) &ten);
-multi_step_100      = create_submenu_entry(multi_step_submenu, "100 steps",
-                           callback_button_start, (gpointer) &hundred);
-multi_step_1000     = create_submenu_entry(multi_step_submenu, "1000 steps",
-                           callback_button_start, (gpointer) &thousand);
-multi_step_10000    = create_submenu_entry(multi_step_submenu, "10 000 steps",
-                           callback_button_start, (gpointer) &ten_thousand);
-multi_step_100000   = create_submenu_entry(multi_step_submenu, "100 000 steps",
-                           callback_button_start, (gpointer) &hundred_thousand);
-multi_step_1000000  = create_submenu_entry(multi_step_submenu, "1 000 000 steps",
-                           callback_button_start, (gpointer) &million);
+//multi_step_10       = create_submenu_entry(multi_step_submenu, "10 steps",
+//                           callback_button_start, (gpointer) &ten);
+//multi_step_100      = create_submenu_entry(multi_step_submenu, "100 steps",
+//                           callback_button_start, (gpointer) &hundred);
+//multi_step_1000     = create_submenu_entry(multi_step_submenu, "1000 steps",
+//                           callback_button_start, (gpointer) &thousand);
+//multi_step_10000    = create_submenu_entry(multi_step_submenu, "10 000 steps",
+//                           callback_button_start, (gpointer) &ten_thousand);
+//multi_step_100000   = create_submenu_entry(multi_step_submenu, "100 000 steps",
+//                           callback_button_start, (gpointer) &hundred_thousand);
+//multi_step_1000000  = create_submenu_entry(multi_step_submenu, "1 000 000 steps",
+//                           callback_button_start, (gpointer) &million);
 
 /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 
@@ -539,16 +539,16 @@ features = create_submenu_entry2(special_submenu, "Features",
 
 actions_submenu = gtk_menu_new();                          /* actions submenu */
 
-reset = create_submenu_entry(actions_submenu, "Reset",
-                GTK_SIGNAL_FUNC(callback_button_reset), NULL);
+reset = create_submenu_entry(actions_submenu, "Stop",
+                GTK_SIGNAL_FUNC(callback_button_stop), NULL);
 ping  = create_submenu_entry(actions_submenu, "Ping",
                 GTK_SIGNAL_FUNC(callback_button_ping), NULL);
 run   = create_submenu_entry(actions_submenu,
                                "Run                                    F5",
                 GTK_SIGNAL_FUNC(callback_button_start), (gpointer) &zero);
 stop  = create_submenu_entry(actions_submenu,
-                               "Stop                                   F6",
-                GTK_SIGNAL_FUNC(callback_button_stop), NULL);
+                               "Pause                                   F6",
+                GTK_SIGNAL_FUNC(callback_button_pause), NULL);
 continue_running = create_submenu_entry(actions_submenu,
                                "Continue                          F10",
                 GTK_SIGNAL_FUNC(callback_button_continue), NULL);
@@ -741,9 +741,9 @@ GtkWidget *view_create_filebar(void)
 /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 
 if (TRACE > 5) g_print("view_create_filebar\n");
-GtkWidget *hbox1 = new_box(FALSE, 2, HORIZONTAL);
-vbox = new_box(TRUE, 2, VERTICAL);
-gtk_box_pack_start(GTK_BOX(hbox1), vbox, FALSE, FALSE, 4);
+GtkWidget *hbox1 = new_box(FALSE, 0, HORIZONTAL);
+hbox = new_box(FALSE, 2, HORIZONTAL);
+gtk_box_pack_start(GTK_BOX(hbox1), hbox, FALSE, FALSE, 2);
 //hbox = new_box(TRUE, 4, HORIZONTAL);
 //gtk_box_pack_start(GTK_BOX(vbox), hbox, FALSE, FALSE, 0);
 
@@ -752,9 +752,9 @@ gtk_box_pack_start(GTK_BOX(hbox1), vbox, FALSE, FALSE, 4);
 
 //button_findcompile = push_button("Browse...", hbox, FALSE, FALSE, 0);
 
-button_load = push_button("Open", vbox, FALSE, FALSE, 2);
+button_load = push_button("Open", hbox, FALSE, FALSE, 0);
 
-button_reload = push_button("Reload", vbox, FALSE, FALSE, 2);
+button_reload = push_button("Reload", hbox, FALSE, FALSE, 0);
 gtk_signal_connect(GTK_OBJECT(button_reload), "clicked",    /* If reload pressed, load */
                     GTK_SIGNAL_FUNC(callback_button_reload_file), NULL);
 
@@ -1558,18 +1558,18 @@ GtkWidget *hbox1 = new_box(FALSE, 4, HORIZONTAL);
 vbox = new_box(FALSE, 2, VERTICAL);
 //gtk_box_pack_start (GTK_BOX (hbox1), vbox, FALSE, FALSE, 0);
 
-hbox = new_box(FALSE, 4, HORIZONTAL);
-button_ping = create_ctrl_push_button("Ping",
-                                        GTK_SIGNAL_FUNC(callback_button_ping),
-                                        NULL, 0,
-                                       "Ping board and refresh display",
-                                       hbox);
-gtk_box_pack_start (GTK_BOX (hbox1), hbox, FALSE, FALSE, 0);
+//hbox = new_box(FALSE, 4, HORIZONTAL);
+//button_ping = create_ctrl_push_button("Ping",
+//                                        GTK_SIGNAL_FUNC(callback_button_ping),
+//                                        NULL, 0,
+//                                       "Ping board and refresh display",
+//                                       hbox);
+//gtk_box_pack_start (GTK_BOX (hbox1), hbox, FALSE, FALSE, 0);
 
-separator = gtk_vseparator_new();
+//separator = gtk_vseparator_new();
 hbox = new_box(FALSE, 4, HORIZONTAL);
-gtk_widget_show(separator);
-gtk_box_pack_start(GTK_BOX(hbox), separator, FALSE, FALSE, 0);
+//gtk_widget_show(separator);
+//gtk_box_pack_start(GTK_BOX(hbox), separator, FALSE, FALSE, 0);
 gtk_box_pack_start(GTK_BOX(hbox1), hbox, FALSE, FALSE, 0);
 
 
@@ -1599,21 +1599,21 @@ button_start = create_picture_push_button(view_play_pixmap, view_play_bitmap,
                                       hbox);
 
 button_stop  = create_picture_push_button(view_pause_pixmap, view_pause_bitmap,
-                                        GTK_SIGNAL_FUNC(callback_button_stop),
+                                        GTK_SIGNAL_FUNC(callback_button_pause),
                                         NULL, GDK_F6,
                                        "Pause execution [F6]",
                                        hbox);
 
-button_multi = create_ctrl_push_button("Continue",
-                                        GTK_SIGNAL_FUNC(callback_button_continue),
-                                        NULL, GDK_F10,
-                                       "Continue execution [F10]",
-                                       hbox);
-hbox = new_box(FALSE, 4, HORIZONTAL);
-gtk_box_pack_start(GTK_BOX(vbox), hbox, FALSE, FALSE, 0);
+//button_multi = create_ctrl_push_button("Continue",
+//                                        GTK_SIGNAL_FUNC(callback_button_continue),
+//                                        NULL, GDK_F10,
+//                                       "Continue execution [F10]",
+//                                       hbox);
+//hbox = new_box(FALSE, 4, HORIZONTAL);
+//gtk_box_pack_start(GTK_BOX(vbox), hbox, FALSE, FALSE, 0);
 
 button_start = create_picture_push_button(view_stop_pixmap, view_stop_bitmap,
-                                        GTK_SIGNAL_FUNC(callback_button_reset),
+                                        GTK_SIGNAL_FUNC(callback_button_stop),
                                         NULL, 0,
                                        "Stop and reset client",
                                        hbox);
@@ -1651,30 +1651,11 @@ button_single= create_ctrl_push_button("Single-Step",
                                         GTK_SIGNAL_FUNC(callback_button_start),
                                        (gpointer) &one, GDK_F7,
                                        "Take one step [F7]",
-                                       vbox);
-
-GtkWidget *derp = new_box(FALSE, 4, HORIZONTAL);
-gtk_box_pack_start(GTK_BOX(vbox), derp, FALSE, FALSE, 0);
-
-cbutton_break = create_ctrl_toggle_button("Breakpoints",
-                                  GTK_SIGNAL_FUNC(callback_start_toggle),
-                                  GINT_TO_POINTER(0x10),
-                                 "Activate breakpoints",
-                                  test_run_flag(RUN_FLAG_BREAK),
-                                  derp);
-
-cbutton_break = create_ctrl_toggle_button("Watchpoints",
-                                  GTK_SIGNAL_FUNC(callback_start_toggle),
-                                  GINT_TO_POINTER(0x20),
-                                 "Activate watchpoints",
-                                  test_run_flag(RUN_FLAG_WATCH),
-                                  derp);
+                                       hbox);
 
 
-vbox = new_box(TRUE, 2, VERTICAL);
-hbox = new_box(TRUE, 4, HORIZONTAL);
-gtk_box_pack_start(GTK_BOX(vbox), hbox, FALSE, TRUE, 0);
-gtk_box_pack_start(GTK_BOX(hbox1), vbox, FALSE, TRUE, 0);
+hbox = new_box(TRUE, 2, HORIZONTAL);
+gtk_box_pack_start(GTK_BOX(hbox1), hbox, FALSE, FALSE, 0);
 
 button_multi = create_ctrl_push_button("Multi-Step",
                                         GTK_SIGNAL_FUNC(callback_button_start),
@@ -1687,8 +1668,8 @@ create_ctrl_spin_button(1, 1, 1000000, &view_step_number,
                         hbox);
                                                    /* Max. -was- much greater */
 
-hbox = new_box(FALSE, 4, HORIZONTAL);
-gtk_box_pack_start(GTK_BOX(vbox), hbox, FALSE, FALSE, 0);
+hbox = new_box(TRUE, 0, HORIZONTAL);
+gtk_box_pack_start(GTK_BOX(hbox1), hbox, FALSE, TRUE, 0);
 
 
 button_multi = create_ctrl_push_button("Walk",
@@ -1700,6 +1681,23 @@ create_ctrl_spin_button(1000, 1, 10000, &view_step_freq,
                        "Change period (ms) between steps when walking.\n"
                        "Remember to press return after entering a new value",
                        hbox);
+
+hbox = new_box(TRUE, 4, HORIZONTAL);
+gtk_box_pack_start(GTK_BOX(hbox1), hbox, FALSE, FALSE, 0);
+
+cbutton_break = create_ctrl_toggle_button("Breakpoints",
+                                  GTK_SIGNAL_FUNC(callback_start_toggle),
+                                  GINT_TO_POINTER(0x10),
+                                 "Activate breakpoints",
+                                  test_run_flag(RUN_FLAG_BREAK),
+                                  hbox);
+
+cbutton_break = create_ctrl_toggle_button("Watchpoints",
+                                  GTK_SIGNAL_FUNC(callback_start_toggle),
+                                  GINT_TO_POINTER(0x20),
+                                 "Activate watchpoints",
+                                  test_run_flag(RUN_FLAG_WATCH),
+                                  hbox);
 
 
 vbox = new_box(FALSE, 2, VERTICAL);
@@ -1716,10 +1714,10 @@ gtk_widget_show(separator);
 gtk_box_pack_start(GTK_BOX(hbox), separator, FALSE, FALSE, 0);
 gtk_box_pack_start(GTK_BOX(hbox1), hbox, FALSE, FALSE, 0);
 
-vbox = new_box(FALSE, 2, VERTICAL);
+//vbox = new_box(FALSE, 2, VERTICAL);
 hbox = new_box(FALSE, 4, HORIZONTAL);
-gtk_box_pack_start(GTK_BOX(vbox), hbox, FALSE, FALSE, 0);
-gtk_box_pack_start(GTK_BOX(hbox1), vbox, FALSE, FALSE, 0);
+//gtk_box_pack_start(GTK_BOX(vbox), hbox, FALSE, FALSE, 0);
+gtk_box_pack_start(GTK_BOX(hbox1), hbox, FALSE, FALSE, 0);
 
 label = status_message("Service:", hbox, FALSE, FALSE, 0);
 
@@ -1744,8 +1742,14 @@ cbutton_proc  = create_ctrl_toggle_button("Abort",
                                   test_run_flag(RUN_FLAG_ABORT),
                                   hbox);
 
+separator = gtk_vseparator_new();
 hbox = new_box(FALSE, 4, HORIZONTAL);
-gtk_box_pack_start(GTK_BOX(vbox), hbox, FALSE, FALSE, 0);
+gtk_widget_show(separator);
+gtk_box_pack_start(GTK_BOX(hbox), separator, FALSE, FALSE, 0);
+gtk_box_pack_start(GTK_BOX(hbox1), hbox, FALSE, FALSE, 0);
+
+hbox = new_box(FALSE, 4, HORIZONTAL);
+gtk_box_pack_start(GTK_BOX(hbox1), hbox, FALSE, FALSE, 0);
 
 label = status_message("Active:", hbox, FALSE, FALSE, 0);
 

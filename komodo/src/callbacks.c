@@ -1233,12 +1233,12 @@ return;
 /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 /* Called when stop is chosen in the cases as above                           */
 
-void callback_button_stop(GtkButton *button, gpointer ignore)
+void callback_button_pause(GtkButton *button, gpointer ignore)
 {
 if (TRACE > 5) g_print("callback_button_stop\n");
 
 stop_board();
-gtk_label_set_text(GTK_LABEL(view_enqlabel), "Stopped");
+gtk_label_set_text(GTK_LABEL(view_enqlabel), "Paused");
 set_refresh(FALSE, 0);                                /* unset refresh button */
 callback_refresh_selection(TRUE, TRUE, TRUE);
 return;
@@ -1377,7 +1377,7 @@ return;
 /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 /* reset button pressed or menu entry activated                               */
 
-void callback_button_reset(GtkButton *ignore, gpointer ignore2)
+void callback_button_stop(GtkButton *ignore, gpointer ignore2)
 {
 unsigned int dummy;
 
