@@ -220,6 +220,17 @@ GdkBitmap *view_komodoicon_bitmap;
 GdkPixmap *view_komodominiicon_pixmap;
 GdkBitmap *view_komodominiicon_bitmap;
 
+GdkPixmap *view_play_pixmap;
+GdkBitmap *view_play_bitmap;
+GdkPixmap *view_stop_pixmap;
+GdkBitmap *view_stop_bitmap;
+GdkPixmap *view_pause_pixmap;
+GdkBitmap *view_pause_bitmap;
+GdkPixmap *view_refresh_pixmap;
+GdkBitmap *view_refresh_bitmap;
+GdkPixmap *view_breakpoint_pixmap;
+GdkBitmap *view_breakpoint_bitmap;
+
 GtkTooltips *view_tooltips;  /* one to hold the tooltips of all items in turn */
 
 // GtkWidget *console_entry; /* the entry within the console/terminal is now global */

@@ -528,7 +528,8 @@ int view_updatememwindow(mem_window *memwindowptr) {
         break;
       case breakpt:
         gtk_clist_set_foreground(clist, row, &view_orangecolour);
-        gtk_clist_set_text(clist, row, BREAKPOINT_ENTRY, "active");
+        gtk_clist_set_pixmap(clist, row, BREAKPOINT_ENTRY, view_breakpoint_pixmap, view_breakpoint_bitmap);
+        //gtk_clist_set_text(clist, row, BREAKPOINT_ENTRY, "active");
         break;
       case highlight:
         gtk_clist_set_foreground(clist, row, &view_redcolour);

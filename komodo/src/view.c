@@ -26,6 +26,11 @@
 #include "breakview.h"
 #include "breakcalls.h"
 #include "config.h"
+#include "Pixmaps/play.xpm"
+#include "Pixmaps/pause.xpm"
+#include "Pixmaps/stop.xpm"
+#include "Pixmaps/refresh.xpm"
+#include "Pixmaps/breakpoint.xpm"
 #include "Pixmaps/tick.xpm"
 #include "Pixmaps/mulogo.xpm"
 #include "Pixmaps/chump.xpm"
@@ -174,6 +179,23 @@ view_komodominiicon_pixmap =
                                            &view_komodominiicon_bitmap, NULL,
                                            komodominiicon_xpm);
 
+view_play_pixmap = 
+    gdk_pixmap_colormap_create_from_xpm_d(NULL, gdk_colormap_get_system(),
+                                            &view_play_bitmap, NULL, play_xpm);
+
+view_stop_pixmap = 
+    gdk_pixmap_colormap_create_from_xpm_d(NULL, gdk_colormap_get_system(),
+                                            &view_stop_bitmap, NULL, stop_xpm);
+
+view_pause_pixmap = 
+    gdk_pixmap_colormap_create_from_xpm_d(NULL, gdk_colormap_get_system(),
+                                            &view_pause_bitmap, NULL, pause_xpm);
+view_refresh_pixmap = 
+    gdk_pixmap_colormap_create_from_xpm_d(NULL, gdk_colormap_get_system(),
+                                            &view_refresh_bitmap, NULL, refresh_xpm);
+view_breakpoint_pixmap = 
+    gdk_pixmap_colormap_create_from_xpm_d(NULL, gdk_colormap_get_system(),
+                                            &view_breakpoint_bitmap, NULL, breakpoint_xpm);
 //   hints.base_width  = 990;
 //   hints.base_height = 700;
 //   hints.max_height  = 700;
@@ -1424,6 +1446,7 @@ GtkWidget *button_multi;
 GtkWidget *cbutton_break;
 GtkWidget *cbutton_swi;
 GtkWidget *cbutton_proc;
+GtkWidget *pixmap;
 GtkWidget *label;
 GtkWidget *button_feature;
 
@@ -1451,6 +1474,41 @@ GtkWidget *button_feature;
 
 /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 
+
+/* `function' "type" ? @@@ */
+  GtkWidget *create_picture_push_button(GdkPixmap *px_picture,
+                                     GdkBitmap *bm_picture,
+                                     callback_button_go_fn function,
+                                     gpointer parameter,
+                                     guint accelerator,
+                                     char *tip,
+                                     GtkWidget *box)
+  {
+  GtkWidget *handle;
+  GtkWidget *pixmap;
+  GtkWidget *buttonbox;
+
+  buttonbox = new_box(FALSE, 0, HORIZONTAL);
+  pixmap = gtk_pixmap_new(px_picture, bm_picture);
+  gtk_widget_show(pixmap);
+
+  handle = gtk_button_new();
+  gtk_widget_ref(handle);
+  gtk_widget_show(handle);
+
+  gtk_box_pack_start(GTK_BOX(box), handle, FALSE, FALSE, 0);
+  gtk_container_add(GTK_CONTAINER(handle), pixmap);
+
+  gtk_signal_connect(GTK_OBJECT(handle), "clicked",
+                     GTK_SIGNAL_FUNC(function), parameter);
+  if (tip[0] != '\0') gtk_tooltips_set_tip(view_tooltips, handle, tip, NULL);
+  if (accelerator != 0)
+    gtk_widget_add_accelerator(handle, "clicked", accel_group, accelerator, 0,
+                               GTK_ACCEL_VISIBLE);
+  return handle;
+  }
+
+/* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
   GtkWidget *create_ctrl_toggle_button(char *string,
                                        callback_button_go_fn function,
                                        gpointer parameter,
@@ -1534,16 +1592,16 @@ gtk_box_pack_start(GTK_BOX(vbox), hbox, FALSE, FALSE, 0);
 gtk_box_pack_start(GTK_BOX(hbox1), vbox, FALSE, FALSE, 0);
     
 
-button_start = create_ctrl_push_button("Run",
+button_start = create_picture_push_button(view_play_pixmap, view_play_bitmap,
                                        GTK_SIGNAL_FUNC(callback_button_start),
                                       (gpointer) &zero, GDK_F5,
                                       "Start execution [F5]",
                                       hbox);
 
-button_stop  = create_ctrl_push_button("Pause",
+button_stop  = create_picture_push_button(view_pause_pixmap, view_pause_bitmap,
                                         GTK_SIGNAL_FUNC(callback_button_stop),
                                         NULL, GDK_F6,
-                                       "Stop execution [F6]",
+                                       "Pause execution [F6]",
                                        hbox);
 
 button_multi = create_ctrl_push_button("Continue",
@@ -1554,17 +1612,21 @@ button_multi = create_ctrl_push_button("Continue",
 hbox = new_box(FALSE, 4, HORIZONTAL);
 gtk_box_pack_start(GTK_BOX(vbox), hbox, FALSE, FALSE, 0);
 
-button_start = create_ctrl_push_button("Reset",
+button_start = create_picture_push_button(view_stop_pixmap, view_stop_bitmap,
                                         GTK_SIGNAL_FUNC(callback_button_reset),
                                         NULL, 0,
-                                       "Reset client",
+                                       "Stop and reset client",
                                        hbox);
 
-cbutton_proc = gtk_toggle_button_new_with_label ("Refresh");
+cbutton_proc = gtk_toggle_button_new();
 gtk_toggle_button_set_active (GTK_TOGGLE_BUTTON (cbutton_proc), FALSE);
 gtk_widget_ref (cbutton_proc);
 gtk_widget_show (cbutton_proc);
 gtk_box_pack_start (GTK_BOX (hbox), cbutton_proc, FALSE, FALSE, 0);
+pixmap = gtk_pixmap_new(view_refresh_pixmap, view_refresh_bitmap);
+gtk_widget_show(pixmap);
+gtk_container_add(GTK_CONTAINER(cbutton_proc), pixmap);
+
 gtk_signal_connect (GTK_OBJECT (cbutton_proc), "toggled",
                     GTK_SIGNAL_FUNC (callback_refresh_toggle), NULL);
 gtk_tooltips_set_tip (view_tooltips, cbutton_proc,
@@ -2094,7 +2156,7 @@ gtk_container_add(GTK_CONTAINER(scrolledwindow), clist);
 
 gtk_clist_column_titles_show(GTK_CLIST(clist));
 
-label = column_label("Breakpoint", clist, BREAKPOINT_ENTRY, 100);
+label = column_label("", clist, BREAKPOINT_ENTRY, 10);
 label =   column_label("Address",     clist, ADDRESS_ENTRY, 100);
 for (i = MIN_HEX_ENTRY; i <= MAX_HEX_ENTRY; i++)
   label = column_label("Hex",         clist, i, hex_column_width);
