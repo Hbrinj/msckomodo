@@ -2094,6 +2094,7 @@ gtk_container_add(GTK_CONTAINER(scrolledwindow), clist);
 
 gtk_clist_column_titles_show(GTK_CLIST(clist));
 
+label = column_label("Breakpoint", clist, BREAKPOINT_ENTRY, 100);
 label =   column_label("Address",     clist, ADDRESS_ENTRY, 100);
 for (i = MIN_HEX_ENTRY; i <= MAX_HEX_ENTRY; i++)
   label = column_label("Hex",         clist, i, hex_column_width);
@@ -2886,7 +2887,7 @@ GtkWidget *ret;
 int tempint;
 
 if (TRACE > 5) g_print("view_parse_list\n");
-
+g_print("%c\n",*(view_window_display_list));
 switch (*(view_window_display_list++))
   {
   case '!':
@@ -2959,7 +2960,7 @@ switch (*(view_window_display_list++))
   case 'R':
     return view_create_register_clist (*(view_window_display_list++) - '0');
   case 'M':
-    return view_create_memory_clist(MEM_WIN_DUMP,   FALSE, NULL, MEM_REP_WORD);
+    return NULL;//view_create_memory_clist(MEM_WIN_DUMP,   FALSE, NULL, MEM_REP_WORD);
   case 'K':
     return view_create_memory_clist(MEM_WIN_SOURCE, FALSE, NULL, MEM_REP_WORD);
   case 'F':

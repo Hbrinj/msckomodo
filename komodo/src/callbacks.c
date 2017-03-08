@@ -118,7 +118,7 @@ boolean board_running = FALSE; /* Host thinks so - check for client agreement */
 boolean was_walking   = FALSE;
 
 char *mem_column_data[] =        /* Global; shared with view.c (see global.h) */
-    { "Address", "Hex", "Hex", "Hex", "Hex", "Hex", "Hex", "Hex", "Hex",
+    { "","Address", "Hex", "Hex", "Hex", "Hex", "Hex", "Hex", "Hex", "Hex",
                  "Hex", "Hex", "Hex", "Hex", "Hex", "Hex", "Hex", "Hex",
                  "Hex", "Hex", "Hex", "Hex", "Hex", "Hex", "Hex", "Hex",
                  "Hex", "Hex", "Hex", "Hex", "Hex", "Hex", "Hex", "Hex",

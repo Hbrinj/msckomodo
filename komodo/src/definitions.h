@@ -5,12 +5,13 @@
 
 
 /* Display columns */
-#define ADDRESS_ENTRY        0
-#define MIN_HEX_ENTRY        1
-#define MAX_HEX_ENTRY       32
-#define ASCII_ENTRY         33
-#define DIS_ENTRY           34
-#define TOTAL_ENTRY         35  /* Maximum number of columns in memory window */
+#define BREAKPOINT_ENTRY     0
+#define ADDRESS_ENTRY        1
+#define MIN_HEX_ENTRY        2
+#define MAX_HEX_ENTRY       33
+#define ASCII_ENTRY         34
+#define DIS_ENTRY           35
+#define TOTAL_ENTRY         36  /* Maximum number of columns in memory window */
 
 #define CPSR 16                    /* defining CPSR and SPSR register numbers */
 #define SPSR 17
