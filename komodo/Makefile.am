@@ -2,6 +2,8 @@
 
 SUBDIRS = src
 
+dotkomodo.string: sample.komodo
+	src/parse.pl < src/sample.komodo > src/dotkomodo.string 
 #install-data-local:
 #	@$(NORMAL_INSTALL)
 #	if test -d $(srcdir)/pixmaps; then \

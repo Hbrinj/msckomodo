@@ -19,6 +19,7 @@
 #include <sys/stat.h>
 #include <sys/socket.h>
 #include <sys/prctl.h>
+#include <unistd.h>
 #include <netdb.h>
 #include <fcntl.h>
 #include <errno.h>
@@ -1055,7 +1056,8 @@ init_global_vars();
 board_version = -2;                                  /* Code for untested for */
 board_runflags = RUN_FLAG_INIT;
 VERBOSE = VERBOSE_D;
-rcfile = g_strconcat(SETUP_DIR, "/.komodo", NULL);
+config_home = g_strconcat(SETUP_DIR, "/.config/komodo", NULL);
+rcfile = g_strconcat(config_home, "/.komodo", NULL);
                                               /* sets the path to the rc file */
 
 /* Global initialisation being collected here until it can be sorted properly */
@@ -1311,6 +1313,22 @@ GScanner *scanner;                          /* used to parse the .komodo file */
 int status;
 
 /*** *** *** *** *** *** *** *** *** *** *** *** *** *** *** *** *** ***/
+  void create_config_dotkomodo()
+  {
+      FILE *fd;
+      struct stat st = {0};
+
+      //check to see the file exists
+      if(stat(config_home, &st) == -1) {
+          mkdir(config_home, 0777);
+      }
+      
+      fd = fopen(rcfile, "w");               /* open the rc file to be written to */
+      fprintf(fd, "%s", dotkomodo);    /* copy the contents of dotkomodo string */
+      fclose(fd);                                             /* close the file */
+      g_print("%s/.komodo set to default\n", config_home);
+  }
+
 
   int open_dot_komodo()
   {
@@ -1322,10 +1340,13 @@ int status;
   if (!scanner)                            /* Check the state of file scanner */
     {
     g_print("Cannot find set up file `.komodo'\n");
-    g_print("If you would like to create one then start komodo with -c flag\n");
+    g_print("Creating config file...\n");
+    create_config_dotkomodo();
+    //g_print("If you would like to create one then start komodo with -c flag\n");
 //    exit(1);
-    use_internal = TRUE;                         /* Use internal file instead */
-    scanner = ScanOpenSCANString(dotkomodo);
+    //use_internal = TRUE;                         /* Use internal file instead */
+    //scanner = ScanOpenSCANString(dotkomodo);
+    scanner = ScanOpenSCANFile(rcfile);                       /* Open .komodo */
     }
 
   Scantopnode = ScanParseSCANNode(scanner, FALSE);       /* Scan .komodo file */

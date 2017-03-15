@@ -1,4 +1,4 @@
-; dot komodo file v 0.1.4
+; dot komodo file v 0.1.5
 ; ARM v4, MIPS R3000 and STUMP (parts of 6809) instruction sets and processor descriptions
 ; You can always get the latest version from:
 ; http://www.cs.man.ac.uk/teaching/electronics/komodo/.komodo
@@ -13,7 +13,7 @@
     (memory-ptr-width 4)                ; width of memory pointer (assumes 4)
     (wordalign 1)                       ; Are words word aligned?
                                         ; Too painful to explain.
-    (window-list "!~NCurrent.R0.User/System.R1.Supervisor.R2.Abort.R3.Undefined.R4.IRQ.R5.FIQ.R6||NCurrent Flags.F.Saved Flags.S~M~MC")
+    (window-list "!~NCurrent.R0.User/System.R1.Supervisor.R2.Abort.R3.Undefined.R4.IRQ.R5.FIQ.R6||NCurrent Flags.F.Saved Flags.S~KC")
     (regbanks 0                         ; regbanks main-regbank
         (regbank-granularity 4)         ; regbank minimum transfer
         (regbank "Current" 18 4 0     ; regbank "name"  number-of-registers  size-of-registers  offset
