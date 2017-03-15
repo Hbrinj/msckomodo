@@ -18,6 +18,7 @@
 #include <sys/signal.h>
 #include <sys/stat.h>
 #include <sys/socket.h>
+#include <sys/prctl.h>
 #include <netdb.h>
 #include <fcntl.h>
 #include <errno.h>
@@ -1382,6 +1383,7 @@ fixed_font = NULL;	// Hack for LJ (31/3/05)	@@@@
     dup2(board_emulation_communication_from[1], 1);
     close(0);
     dup2(board_emulation_communication_to[0], 0);
+    prctl(PR_SET_PDEATHSIG, SIGHUP); 
     execlp(emulator_prog, emulator_prog, NULL);
     exit(0);
     }
