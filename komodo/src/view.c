@@ -2953,7 +2953,6 @@ GtkWidget *ret;
 int tempint;
 
 if (TRACE > 5) g_print("view_parse_list\n");
-g_print("%c\n",*(view_window_display_list));
 switch (*(view_window_display_list++))
   {
   case '!':
@@ -3026,7 +3025,7 @@ switch (*(view_window_display_list++))
   case 'R':
     return view_create_register_clist (*(view_window_display_list++) - '0');
   case 'M':
-    return NULL;//view_create_memory_clist(MEM_WIN_DUMP,   FALSE, NULL, MEM_REP_WORD);
+    return view_create_memory_clist(MEM_WIN_DUMP,   FALSE, NULL, MEM_REP_WORD);
   case 'K':
     return view_create_memory_clist(MEM_WIN_SOURCE, FALSE, NULL, MEM_REP_WORD);
   case 'F':
