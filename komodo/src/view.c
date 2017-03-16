@@ -114,6 +114,7 @@ GtkWidget *view_create_mov_split(orientation);
 GtkWidget *new_box(gboolean, gint, orientation);
 GtkWidget *status_message(char*, GtkWidget*, gboolean, gboolean, guint);
 GtkWidget *view_separator(GtkMenu*);
+GtkWidget *filebar_browser(char *, char *, GtkObject *, GtkWidget *, gboolean);
 void       view_refresh_symbol_clist(GtkWidget*);
 
 GtkWidget *column_label(char*, GtkWidget*, int, int);
@@ -256,6 +257,45 @@ gtk_box_pack_end(GTK_BOX(view_maincontainer), status_bar, FALSE, FALSE, 0);
 return;
 }
 
+GtkWidget *filebar_browser(char *string, char *completion,
+                         GtkObject *object,
+                         GtkWidget *parameter, gboolean menu_item)
+{
+GtkWidget *handle;
+GtkWidget *ok_button;
+GtkWidget *cancel_button;
+
+handle = gtk_file_selection_new(string);
+gtk_window_set_transient_for(GTK_WINDOW(handle), GTK_WINDOW(view_mainwindow));
+                    /* Ensure features window stays on top of main window */
+                                    // Not sure that this is correct choice @@@ 
+
+gtk_container_set_border_width(GTK_CONTAINER(handle), 10);
+ok_button = GTK_FILE_SELECTION(handle)->ok_button;
+gtk_widget_show(ok_button);
+GTK_WIDGET_SET_FLAGS(ok_button, GTK_CAN_DEFAULT);
+cancel_button = GTK_FILE_SELECTION(handle)->cancel_button;
+gtk_widget_show(cancel_button);
+GTK_WIDGET_SET_FLAGS(cancel_button, GTK_CAN_DEFAULT);
+gtk_file_selection_complete(GTK_FILE_SELECTION(handle), completion);
+
+
+gtk_signal_connect_object(GTK_OBJECT(handle), "delete_event",
+                        GTK_SIGNAL_FUNC(gtk_widget_hide), 
+                        GTK_OBJECT(handle)); 
+gtk_signal_connect_object(object, (menu_item ? "activate" : "clicked"),
+                        GTK_SIGNAL_FUNC(gtk_widget_show),
+                        GTK_OBJECT(handle));
+gtk_signal_connect_object(GTK_OBJECT(cancel_button), "clicked",
+                        GTK_SIGNAL_FUNC(gtk_widget_hide),
+                        GTK_OBJECT(handle));
+gtk_signal_connect_object(GTK_OBJECT(ok_button), "clicked",
+                        GTK_SIGNAL_FUNC(gtk_widget_hide),
+                        GTK_OBJECT(handle));
+gtk_signal_connect(GTK_OBJECT(ok_button), "clicked",
+                 GTK_SIGNAL_FUNC(callback_button_open_file), parameter);
+return handle;
+}
 /*                                                                            */
 /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 /******************************************************************************/
@@ -284,7 +324,9 @@ GtkWidget *help_submenu;
 GtkWidget *walk_submenu;
 GtkWidget *multi_step_submenu;
 GtkWidget *flags_submenu;
-GtkWidget *compile;
+GtkWidget *open_file;
+GtkWidget *reload_file;
+GtkWidget *fileselection;
 GtkWidget *load;
   //GtkWidget *browse_compile;
      /* these may be used for the corresponding entries in the menu which are */
@@ -464,18 +506,18 @@ multi_step_as_below = create_submenu_entry(multi_step_submenu,
 
 separator           = view_separator(GTK_MENU (multi_step_submenu));
 
-//multi_step_10       = create_submenu_entry(multi_step_submenu, "10 steps",
-//                           callback_button_start, (gpointer) &ten);
-//multi_step_100      = create_submenu_entry(multi_step_submenu, "100 steps",
-//                           callback_button_start, (gpointer) &hundred);
-//multi_step_1000     = create_submenu_entry(multi_step_submenu, "1000 steps",
-//                           callback_button_start, (gpointer) &thousand);
-//multi_step_10000    = create_submenu_entry(multi_step_submenu, "10 000 steps",
-//                           callback_button_start, (gpointer) &ten_thousand);
-//multi_step_100000   = create_submenu_entry(multi_step_submenu, "100 000 steps",
-//                           callback_button_start, (gpointer) &hundred_thousand);
-//multi_step_1000000  = create_submenu_entry(multi_step_submenu, "1 000 000 steps",
-//                           callback_button_start, (gpointer) &million);
+multi_step_10       = create_submenu_entry(multi_step_submenu, "10 steps",
+                           callback_button_start, (gpointer) &ten);
+multi_step_100      = create_submenu_entry(multi_step_submenu, "100 steps",
+                           callback_button_start, (gpointer) &hundred);
+multi_step_1000     = create_submenu_entry(multi_step_submenu, "1000 steps",
+                           callback_button_start, (gpointer) &thousand);
+multi_step_10000    = create_submenu_entry(multi_step_submenu, "10 000 steps",
+                           callback_button_start, (gpointer) &ten_thousand);
+multi_step_100000   = create_submenu_entry(multi_step_submenu, "100 000 steps",
+                           callback_button_start, (gpointer) &hundred_thousand);
+multi_step_1000000  = create_submenu_entry(multi_step_submenu, "1 000 000 steps",
+                           callback_button_start, (gpointer) &million);
 
 /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 
@@ -489,6 +531,14 @@ file_submenu = gtk_menu_new ();                               /* file submenu */
 //compile = create_submenu_entry(file_submenu, "Compile file",
 //                               callback_button_compile, centry_compile);
 
+open_file = create_submenu_entry(file_submenu, "Open file", NULL, NULL);
+fileselection = filebar_browser("Select Source/Object File",
+                                ("*" OBJECT_EXT ", *" SOURCE_EXT),      /* Concatenate strings */
+                                GTK_OBJECT(open_file),
+                                NULL, TRUE);
+
+reload_file = create_submenu_entry(file_submenu, "Reload file",
+                               callback_button_reload_file, NULL);
 separator = view_separator(GTK_MENU(file_submenu));
 
 quit    = create_submenu_entry(file_submenu, "Quit Program",
@@ -698,45 +748,6 @@ GtkWidget *view_create_filebar(void)
 
 /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 
-  GtkWidget *filebar_browser(char *string, char *completion,
-                             GtkObject *object,
-                             GtkWidget *parameter)
-  {
-  GtkWidget *handle;
-  GtkWidget *ok_button;
-  GtkWidget *cancel_button;
-
-  handle = gtk_file_selection_new(string);
-  gtk_window_set_transient_for(GTK_WINDOW(handle), GTK_WINDOW(view_mainwindow));
-                        /* Ensure features window stays on top of main window */
-					// Not sure that this is correct choice @@@ 
-
-  gtk_container_set_border_width(GTK_CONTAINER(handle), 10);
-  ok_button = GTK_FILE_SELECTION(handle)->ok_button;
-  gtk_widget_show(ok_button);
-  GTK_WIDGET_SET_FLAGS(ok_button, GTK_CAN_DEFAULT);
-  cancel_button = GTK_FILE_SELECTION(handle)->cancel_button;
-  gtk_widget_show(cancel_button);
-  GTK_WIDGET_SET_FLAGS(cancel_button, GTK_CAN_DEFAULT);
-  gtk_file_selection_complete(GTK_FILE_SELECTION(handle), completion);
-
-
-  gtk_signal_connect_object(GTK_OBJECT(handle), "delete_event",
-                            GTK_SIGNAL_FUNC(gtk_widget_hide), 
-                            GTK_OBJECT(handle)); 
-  gtk_signal_connect_object(object, "clicked",
-                            GTK_SIGNAL_FUNC(gtk_widget_show),
-                            GTK_OBJECT(handle));
-  gtk_signal_connect_object(GTK_OBJECT(cancel_button), "clicked",
-                            GTK_SIGNAL_FUNC(gtk_widget_hide),
-                            GTK_OBJECT(handle));
-  gtk_signal_connect_object(GTK_OBJECT(ok_button), "clicked",
-                            GTK_SIGNAL_FUNC(gtk_widget_hide),
-                            GTK_OBJECT(handle));
-  gtk_signal_connect(GTK_OBJECT(ok_button), "clicked",
-                     GTK_SIGNAL_FUNC(callback_button_open_file), parameter);
-  return handle;
-  }
 
 /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 
@@ -838,7 +849,7 @@ gtk_signal_connect_after(GTK_OBJECT(view_binary_load_address), "changed",
 fileselection = filebar_browser("Select Source/Object File",
                                 ("*" OBJECT_EXT ", *" SOURCE_EXT),      /* Concatenate strings */
                                 GTK_OBJECT(button_load),
-                                centry_load);
+                                centry_load, FALSE);
 
 return hbox1; // vbox;
 }
@@ -2398,7 +2409,7 @@ GtkWidget *view_create_memory_clist(mem_win_type type, int external,
                                     GtkWidget *ext_ID, int style)
 {
 mem_window *memwindow;    /* Local variable for convenience; copied out below */
-GtkWidget *scrolledwindow;
+//GtkWidget *scrolledwindow;
 GtkWidget *mem_panel;
 GtkWidget *vbox;
 GtkWidget *mem_menu;
