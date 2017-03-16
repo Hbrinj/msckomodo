@@ -589,28 +589,25 @@ features = create_submenu_entry2(special_submenu, "Features",
 
 actions_submenu = gtk_menu_new();                          /* actions submenu */
 
-reset = create_submenu_entry(actions_submenu, "Stop",
-                GTK_SIGNAL_FUNC(callback_button_stop), NULL);
-ping  = create_submenu_entry(actions_submenu, "Ping",
-                GTK_SIGNAL_FUNC(callback_button_ping), NULL);
 run   = create_submenu_entry(actions_submenu,
                                "Run                                    F5",
                 GTK_SIGNAL_FUNC(callback_button_start), (gpointer) &zero);
 stop  = create_submenu_entry(actions_submenu,
                                "Pause                                   F6",
                 GTK_SIGNAL_FUNC(callback_button_pause), NULL);
-continue_running = create_submenu_entry(actions_submenu,
-                               "Continue                          F10",
-                GTK_SIGNAL_FUNC(callback_button_continue), NULL);
+reset = create_submenu_entry(actions_submenu, "Stop",
+                GTK_SIGNAL_FUNC(callback_button_stop), NULL);
+separator = view_separator(GTK_MENU(actions_submenu));
+ping  = create_submenu_entry(actions_submenu, "Ping",
+                GTK_SIGNAL_FUNC(callback_button_ping), NULL);
+separator = view_separator(GTK_MENU(actions_submenu));
 single_step = create_submenu_entry(actions_submenu,
                                "Single-Step                       F7",
                 GTK_SIGNAL_FUNC(callback_button_start), (gpointer) &one);
 
-separator = view_separator(GTK_MENU(actions_submenu));
 
 create_subsubmenu(actions_submenu, "Multi-Step", multi_step_submenu);
 
-separator = view_separator(GTK_MENU(actions_submenu));
 
 create_subsubmenu(actions_submenu, "Walk", walk_submenu);
 
@@ -2139,7 +2136,7 @@ if (TRACE > 5) g_print("view_mem_display_panel\n");
 
 scrolledwindow = gtk_scrolled_window_new(NULL, NULL);
 gtk_scrolled_window_set_policy(GTK_SCROLLED_WINDOW(scrolledwindow),
-                               GTK_POLICY_NEVER, GTK_POLICY_AUTOMATIC);
+                               GTK_POLICY_NEVER, GTK_POLICY_NEVER);
 gtk_widget_show(scrolledwindow);
 gtk_box_pack_end(GTK_BOX(vbox), scrolledwindow, TRUE, TRUE, 0);
 
