@@ -124,6 +124,9 @@ GtkWidget *create_submenu_entry(GtkWidget*, char*,
 GtkWidget *entry_box(GtkWidget*, int, int, callback_button_go_fn);
                                          /* check "typing" @@@ */
 
+/* Memvis funcs */
+GtkWidget *view_create_memvis(void);
+
 /* Global variables for this file only */
 GtkWidget *view_maincontainer;   /* the actual container within the(?) window */
 GtkWidget *window_about;                       /* Pointer to the about window */
@@ -333,6 +336,7 @@ GtkWidget *load;
   //GtkWidget *browse_load;                               /* currently unused */
 GtkWidget *quit;
 GtkWidget *features;
+GtkWidget *memvis;
 GtkWidget *simple_breakpoints;
 GtkWidget *breakpoints;
 GtkWidget *simple_watchpoints;
@@ -582,6 +586,11 @@ symbol_window_entry = create_submenu_entry(special_submenu, "Symbol Window",
                        GTK_SIGNAL_FUNC(callback_symbol_window_create),
                        (gpointer) 0);
 
+separator = view_separator(GTK_MENU(special_submenu));
+view_memvis_window = view_create_memvis();
+memvis = create_submenu_entry2(special_submenu, "Mem vis",
+                                GTK_OBJECT(view_memvis_window));
+separator = view_separator(GTK_MENU(special_submenu));
 features = create_submenu_entry2(special_submenu, "Features",
                                  GTK_OBJECT(window_feature));
 
@@ -3324,6 +3333,33 @@ return handle;
 
 /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 /******************************************************************************/
+
+GtkWidget *view_create_memvis()
+{
+    GtkWidget *drawing_area;
+    GtkWidget *hbox;
+    // Create the window
+    GtkWidget *window = gtk_window_new(GTK_WINDOW_TOPLEVEL);
+    gtk_widget_set_name(window, "Memvis");
+    gtk_object_set_data(GTK_OBJECT(window), "Memvis", window);
+    gtk_window_set_title(GTK_WINDOW(window), "Memory visualisation");
+    gtk_window_set_default_size(GTK_WINDOW(window), 600, 500);
+    gtk_window_set_policy(GTK_WINDOW(window), TRUE, TRUE, FALSE);
+    gtk_widget_ref(window);
+
+    // Create the drawing area
+    drawing_area = gtk_drawing_area_new();
+    gtk_drawing_area_size(drawing_area, 500, 500);
+    gtk_signal_connect(GTK_OBJECT(drawing_area), "expose_event",
+            GTK_SIGNAL_FUNC(callback_memvis_draw_mem), NULL);
+
+    hbox = new_box(FALSE, 0, HORIZONTAL);
+
+    gtk_widget_show(drawing_area);
+    gtk_container_add(GTK_CONTAINER(hbox), drawing_area);
+    gtk_container_add(GTK_CONTAINER(window), hbox);
+    return window;
+}
 
 
 /*                                end of view.c                               */

@@ -246,7 +246,7 @@ GtkWidget *view_fileerror;                    /* a widget for error messages, */
                           /*  will be assigned to a new gtk dialogue at times */
 GtkWidget *view_refreshbutton;     /* the widget of the toggle button refresh */
 GtkWidget *view_binary_load_address;  /* the address of a binary being loaded */
-
+GtkWidget *view_memvis_window;               /*The memory visualisation window*/
 GtkWidget *text_in_terminal[TERMINAL_UPPER_BOUND];
 GtkWidget *terminal_active_flag[TERMINAL_UPPER_BOUND];
 

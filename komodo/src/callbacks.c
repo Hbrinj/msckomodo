@@ -3361,5 +3361,16 @@ else
 return;
 }
 
+/* memvis callbacks */
+void callback_memvis_draw_mem(GtkWidget *widget, GdkEventExpose *event, gpointer data)
+{
+     gdk_draw_arc (widget->window,
+                widget->style->black_gc,
+                TRUE,
+                0, 0, widget->allocation.width, widget->allocation.height,
+                0, 64 * 360);
+}
+
+
 /*                           end of callbacks.c                               */
 /*============================================================================*/

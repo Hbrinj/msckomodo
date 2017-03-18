@@ -132,6 +132,9 @@ void callback_symbol_window_create(gpointer, gpointer);
 void callback_memory_window_destroy(gpointer, gpointer);
 void callback_symbol_window_destroy(gpointer, gpointer);
 
+/* memvis callbacks */
+void callback_memvis_draw_mem(GtkWidget*, GdkEventExpose*, gpointer);
+
 #endif
 
 /*                                                                            */
