@@ -37,6 +37,8 @@
 #include "view.h"
 #include "chump.h"
 
+#include "Pixmaps/blank.xpm"
+
 #define LOAD_BUFFER_LENGTH 80 /* Batch size for bytes in ELF (or binary) load */
 #define MAX_OBJECT_LENGTH  16  /* Max number of bytes accepted in object code */
 
@@ -107,7 +109,9 @@ void    flush_sauce(void);
 boolean check_elf(char*);
 boolean check_sauce(char*);
 boolean read_sauce(char*);
-
+/* memvis functions */
+void update_memvis_pixbuf(void);
+void draw_memvis_pixbuf(GtkWidget *, GdkEventExpose *);
 gint callback_walk(gpointer);
 
 /* Non-exported variables                                                     */
@@ -1421,6 +1425,7 @@ void callback_global_refresh(void)
 {
 if (TRACE > 3) g_print("callback_global_refresh\n");
 callback_refresh_selection(TRUE, TRUE, FALSE);
+update_memvis_image();
 return;
 }
 
@@ -3361,16 +3366,18 @@ else
 return;
 }
 
-/* memvis callbacks */
-void callback_memvis_draw_mem(GtkWidget *widget, GdkEventExpose *event, gpointer data)
+void update_memvis_image()
 {
-     gdk_draw_arc (widget->window,
-                widget->style->black_gc,
-                TRUE,
-                0, 0, widget->allocation.width, widget->allocation.height,
-                0, 64 * 360);
+    
+    // get memory
+    // loop through figuring out which bit occupied/unoccupied
+    //
+    for(int i = 0; i < 200; i++) {
+        for(int j = 0; j< 200; j ++) {
+            gdk_image_put_pixel(memvis_image,i,j,0x00FF00);
+        }
+    }
 }
-
 
 /*                           end of callbacks.c                               */
 /*============================================================================*/

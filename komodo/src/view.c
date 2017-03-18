@@ -31,6 +31,7 @@
 #include "Pixmaps/stop.xpm"
 #include "Pixmaps/refresh.xpm"
 #include "Pixmaps/breakpoint.xpm"
+#include "Pixmaps/blank.xpm"
 #include "Pixmaps/tick.xpm"
 #include "Pixmaps/mulogo.xpm"
 #include "Pixmaps/chump.xpm"
@@ -3334,30 +3335,34 @@ return handle;
 /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 /******************************************************************************/
 
+
 GtkWidget *view_create_memvis()
 {
-    GtkWidget *drawing_area;
+    GtkWidget *image;
     GtkWidget *hbox;
+    
     // Create the window
     GtkWidget *window = gtk_window_new(GTK_WINDOW_TOPLEVEL);
     gtk_widget_set_name(window, "Memvis");
     gtk_object_set_data(GTK_OBJECT(window), "Memvis", window);
     gtk_window_set_title(GTK_WINDOW(window), "Memory visualisation");
-    gtk_window_set_default_size(GTK_WINDOW(window), 600, 500);
+    gtk_window_set_default_size(GTK_WINDOW(window), MEMVIS_WINDOW_HEIGHT, MEMVIS_WINDOW_WIDTH);
     gtk_window_set_policy(GTK_WINDOW(window), TRUE, TRUE, FALSE);
     gtk_widget_ref(window);
 
-    // Create the drawing area
-    drawing_area = gtk_drawing_area_new();
-    gtk_drawing_area_size(drawing_area, 500, 500);
-    gtk_signal_connect(GTK_OBJECT(drawing_area), "expose_event",
-            GTK_SIGNAL_FUNC(callback_memvis_draw_mem), NULL);
+    memvis_image = gdk_image_new(GDK_IMAGE_FASTEST,
+            gdk_visual_get_system(), 500, 500);
 
+    image = gtk_image_new(memvis_image, NULL);
+    
+    // add the image area to a horizontal box
     hbox = new_box(FALSE, 0, HORIZONTAL);
+    gtk_widget_show(image);
+    gtk_container_add(GTK_CONTAINER(hbox), image);
 
-    gtk_widget_show(drawing_area);
-    gtk_container_add(GTK_CONTAINER(hbox), drawing_area);
+    //add the hbox to the window
     gtk_container_add(GTK_CONTAINER(window), hbox);
+
     return window;
 }
 

@@ -14,6 +14,7 @@
 // #include "interface.h"
 
 #define _(String) (String)
+#define STR(x) #x
 #define uchar unsigned char
 #define TERMINAL_UPPER_BOUND 20
 
@@ -58,6 +59,16 @@
       /* The total number of bytes which can be input in a single source line */
 #define SOURCE_TEXT_LENGTH      100   /* Max length of source line text field */
 
+#define MEMVIS_WINDOW_HEIGHT    600
+#define MEMVIS_WINDOW_WIDTH     500
+#define MEMVIS_DRAWABLE_HEIGHT  5
+#define MEMVIS_DRAWABLE_WIDTH   5
+#define MEMVIS_CHAR_NONE        "."
+#define MEMVIS_CHAR_GREEN       "/"
+#define MEMVIS_COLOR_GREEN      "#00FF00"
+#define MEMVIS_XPM_DESC         STR(MEMVIS_DRAWABLE_WIDTH) " " STR(MEMVIS_DRAWABLE_HEIGHT) " 2          1"
+#define MEMVIS_NONE             MEMVIS_CHAR_NONE " c None"
+#define MEMVIS_COL1             MEMVIS_CHAR_GREEN " c " MEMVIS_COLOR_GREEN
 /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 
 typedef enum { MEM_WIN_DUMP, MEM_WIN_SOURCE } mem_win_type;
@@ -230,6 +241,10 @@ GdkPixmap *view_refresh_pixmap;
 GdkBitmap *view_refresh_bitmap;
 GdkPixmap *view_breakpoint_pixmap;
 GdkBitmap *view_breakpoint_bitmap;
+
+GdkPixmap *memvis_pixmap;
+GdkBitmap *memvis_bitmap;
+GdkImage *memvis_image;
 
 GtkTooltips *view_tooltips;  /* one to hold the tooltips of all items in turn */
 
