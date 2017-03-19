@@ -260,7 +260,7 @@ if (load_lock == FREE)                  /* if nothing else is already loading */
   callback_memory_refresh();                                   /* Refresh all */
   view_refresh_symbol_clists(old_symbol_count, misc_count_symbols());
                                            /* Update any symbol table windows */
-
+  update_memvis_image();
   load_lock = FREE;                                           /* release lock */
   }                                // end locking
 
@@ -3368,15 +3368,27 @@ return;
 
 void update_memvis_image()
 {
-    
-    // get memory
-    // loop through figuring out which bit occupied/unoccupied
-    //
-    for(int i = 0; i < 200; i++) {
-        for(int j = 0; j< 200; j ++) {
-            gdk_image_put_pixel(memvis_image,i,j,0x00FF00);
+    int i = 0, j =0;
+    int x = 0;
+    source_line *src = source.pStart;
+    if(src == NULL) return;
+
+    for(i = 0; i < MEMVIS_DRAWABLE_WIDTH; i++)
+    {
+        for(j = 0; j < MEMVIS_DRAWABLE_HEIGHT; j++)
+        {
+            gdk_image_put_pixel(memvis_image,i,j,0x000000);
         }
     }
+
+    do{
+        if(src->nodata) continue;
+        x = (src->address/4); 
+        i = x % MEMVIS_DRAWABLE_WIDTH;
+        j = x / MEMVIS_DRAWABLE_HEIGHT;
+        gdk_image_put_pixel(memvis_image,i,j,0x00FF00);
+    }while((src = src->pNext) != NULL);
+    gtk_widget_queue_draw(memvis_gtkimage);
 }
 
 /*                           end of callbacks.c                               */

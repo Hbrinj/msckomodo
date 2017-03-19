@@ -3338,9 +3338,12 @@ return handle;
 
 GtkWidget *view_create_memvis()
 {
-    GtkWidget *image;
-    GtkWidget *hbox;
-    
+    GtkWidget *vbox;
+    GtkWidget *close_button;
+    GtkWidget *scrollwin;
+   
+    //gtk_widget_hide;
+   //
     // Create the window
     GtkWidget *window = gtk_window_new(GTK_WINDOW_TOPLEVEL);
     gtk_widget_set_name(window, "Memvis");
@@ -3351,17 +3354,25 @@ GtkWidget *view_create_memvis()
     gtk_widget_ref(window);
 
     memvis_image = gdk_image_new(GDK_IMAGE_FASTEST,
-            gdk_visual_get_system(), 500, 500);
+            gdk_visual_get_system(), MEMVIS_DRAWABLE_HEIGHT, MEMVIS_DRAWABLE_HEIGHT);
 
-    image = gtk_image_new(memvis_image, NULL);
+    memvis_gtkimage = gtk_image_new(memvis_image, NULL);
     
     // add the image area to a horizontal box
-    hbox = new_box(FALSE, 0, HORIZONTAL);
-    gtk_widget_show(image);
-    gtk_container_add(GTK_CONTAINER(hbox), image);
+    vbox = new_box(FALSE, 0, VERTICAL);
+    gtk_widget_show(memvis_gtkimage);
+    gtk_box_pack_start(GTK_BOX(vbox), memvis_gtkimage, FALSE, FALSE, 0);
 
-    //add the hbox to the window
-    gtk_container_add(GTK_CONTAINER(window), hbox);
+    //create and add the close button to the window;
+    close_button = push_button("Close", vbox, TRUE, TRUE, 0);
+    gtk_signal_connect_object(GTK_OBJECT(close_button), "clicked",
+                              GTK_SIGNAL_FUNC(gtk_widget_hide),
+                              GTK_OBJECT(window));
+
+    scrollwin = gtk_scrolled_window_new(NULL, NULL);
+    gtk_widget_show(scrollwin);
+    gtk_scrolled_window_add_with_viewport(scrollwin, vbox);
+    gtk_container_add(GTK_CONTAINER(window), scrollwin);
 
     return window;
 }
