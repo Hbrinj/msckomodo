@@ -120,6 +120,7 @@ gint view_global_refresh_timer;
                           /* Handle of the `walk' timer (NULL == inactive) ?? */
 boolean board_running = FALSE; /* Host thinks so - check for client agreement */
 boolean was_walking   = FALSE;
+boolean was_paused    = FALSE;
 
 char *mem_column_data[] =        /* Global; shared with view.c (see global.h) */
     { "","Address", "Hex", "Hex", "Hex", "Hex", "Hex", "Hex", "Hex", "Hex",
@@ -1229,8 +1230,35 @@ void callback_button_start(GtkButton *button, gpointer steps)
 {
 if (TRACE > 5) g_print("callback_button_start\n");
 
-was_walking = FALSE;
-if (run_board(steps)) set_refresh(TRUE, 0);
+unsigned int steps_left;
+
+if((!was_walking) && (!was_paused))
+{
+    if (run_board(steps)) set_refresh(TRUE, 0);
+    return;
+} 
+
+if (was_walking)
+  {
+  if (board_enq(&steps_left) == CLIENT_STATE_STOPPED) /* Check why we stopped */
+    {
+    if (steps_left > 1) steps_left--;// @@@ HACK: don't know where extra 1 is from
+    walk_board(steps_left, 1);           /* walk on - may break on first step */
+    }
+  else
+    continue_board();
+
+  gtk_label_set_text(GTK_LABEL(view_enqlabel), "Walking");
+  set_refresh(FALSE, g_timeout_add(view_step_freq, callback_walk,
+             (gpointer) &view_step_number));
+  callback_global_refresh();                               /* refresh display */
+  }
+else
+  {
+  continue_board();
+  set_refresh(TRUE, 0);
+  }
+
 return;
 }
 
@@ -1240,7 +1268,7 @@ return;
 void callback_button_pause(GtkButton *button, gpointer ignore)
 {
 if (TRACE > 5) g_print("callback_button_stop\n");
-
+was_paused = TRUE;
 stop_board();
 gtk_label_set_text(GTK_LABEL(view_enqlabel), "Paused");
 set_refresh(FALSE, 0);                                /* unset refresh button */
@@ -1392,7 +1420,8 @@ board_micro_ping();
 set_refresh(FALSE, 0);                                /* Unset refresh button */
 board_micro_ping();                                        /* Why TWICE?? @@@ */
 board_enq(&dummy);                          /* Update client behaviour report */
-
+was_walking = FALSE;
+was_paused = FALSE;
 callback_global_refresh();                                     /* Refresh all */
 return;
 }
