@@ -5,7 +5,8 @@ SUBDIRS = Pixmaps
 
 INCLUDES = @GTK_CFLAGS@
 
-bin_PROGRAMS = kmd flash jimulator
+bin_PROGRAMS = kmd flash jimulator aasm
+bin_SCRIPTS = kmd_compile mnemonics
 
 kmd_SOURCES = \
 	interface.c interface.h\
@@ -30,9 +31,12 @@ flash_SOURCES = serial.c serial.h\
 
 flash_LDADD = @GTK_LIBS@
 
-jimulator_SOURCES =   jimulator.c 
+jimulator_SOURCES = jimulator.c 
 
-jimulator_LDADD = 
+jimulator_LDADD =
+
+aasm_SOURCES = aasm.c
+aasm_LDADD =
 
 EXTRA_DIST = sample.komodo parse.pl
 

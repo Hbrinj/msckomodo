@@ -1,0 +1,15 @@
+#! /bin/sh
+
+FLNME=`echo $1 | sed s/[.]s$//`
+existed=false
+if [ ! -f mnemonics ]
+then 
+    existed=true;
+    ln -s `which mnemonics` .
+fi
+aasm -lk ${FLNME}.kmd $1
+
+if [ "$existed" = true ]
+then
+    rm mnemonics
+fi

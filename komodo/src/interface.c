@@ -1051,7 +1051,6 @@ if (TRACE > 5) g_print("\nmain\n");
     }
   own_path_length = strlen(own_path) + 1;              /* Includes terminator */
   }
-
 init_global_vars();
 board_version = -2;                                  /* Code for untested for */
 board_runflags = RUN_FLAG_INIT;
@@ -1059,7 +1058,6 @@ VERBOSE = VERBOSE_D;
 config_home = g_strconcat(SETUP_DIR, "/.config/komodo", NULL);
 rcfile = g_strconcat(config_home, "/.komodo", NULL);
                                               /* sets the path to the rc file */
-
 /* Global initialisation being collected here until it can be sorted properly */
 (special_registers[0]).name        = "PURPLE"; /* Just a name for association */
 (special_registers[0]).value       = NULL;
@@ -1081,8 +1079,9 @@ source_dis_tabs = DIS_TAB_INIT;                        /* Set up tab position */
 symbol_windows  = NULL;                            /* No symbol table windows */
 
 emulator_PID = 0;
-emulator_prog = malloc(own_path_length + strlen(EMULATOR_PROG));  /* Allocate */
-strcat(strcpy(emulator_prog, own_path), EMULATOR_PROG);
+emulator_prog = EMULATOR_PROG;
+//emulator_prog = malloc(own_path_length + strlen(EMULATOR_PROG));  /* Allocate */
+//strcat(strcpy(emulator_prog, own_path), EMULATOR_PROG);
                                /* Initialise the default name of the emulator */
 
 use_internal = USE_INTERNAL;
@@ -1090,8 +1089,8 @@ use_internal = USE_INTERNAL;
 switch (commandline(argc, argv))                     /* process the arguments */
   {
   case COMMANDLINE_CONTINUE:           break;
-  //case COMMANDLINE_TERMINATE: exit(0); break;
-  //case COMMANDLINE_ERROR:     exit(1); break;
+  case COMMANDLINE_TERMINATE: exit(0); break;
+  case COMMANDLINE_ERROR:     exit(1); break;
   default: fprintf(stderr, "Command parser failed\n"); //exit(1); break;
   }
 
@@ -1110,7 +1109,6 @@ gdk_colormap_alloc_color(gdk_colormap_get_system(), &view_orangecolour, 0, 1);
 /* gdk_colormap_alloc_color(gdk_colormap_get_system(), ...  -after- gtk_init  */
 
 setup();                                  /* Do some necessary initialisation */
-
 //{     Just looking at the memory map, as supplied ...
 //int i, j;
 //printf("Client has %d memory mapped area(s)\n", board_num_mem_segments);

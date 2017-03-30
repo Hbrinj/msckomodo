@@ -948,8 +948,6 @@ void callback_button_open_file(GtkButton *button, gpointer entry)
                                       (GTK_WIDGET(button)->parent->parent->parent));
     source_filename = text;
     load_source(text);
-
-    g_print(text);
 }
 
 void callback_button_reload_file(GtkButton *button, gpointer entry) {

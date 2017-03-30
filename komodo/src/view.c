@@ -239,7 +239,7 @@ top_strip = new_box(FALSE, 3, HORIZONTAL); /* Make a strip for menu & buttons */
 gtk_container_set_border_width(GTK_CONTAINER(top_strip), 3);
 
 gtk_box_pack_start(GTK_BOX(view_maincontainer), menubar,   FALSE, FALSE, 0);
-gtk_box_pack_start(GTK_BOX(view_maincontainer), top_strip, FALSE, FALSE, 0);
+gtk_box_pack_start(GTK_BOX(view_maincontainer), top_strip, FALSE, TRUE, 0);
 gtk_box_pack_start(GTK_BOX(top_strip), filebar, FALSE, TRUE, 0);
 gtk_box_pack_start(GTK_BOX(top_strip), prog_ctrl, TRUE, TRUE, 0);
                                                /* add the program control bar */
@@ -538,7 +538,7 @@ file_submenu = gtk_menu_new ();                               /* file submenu */
 
 open_file = create_submenu_entry(file_submenu, "Open file", NULL, NULL);
 fileselection = filebar_browser("Select Source/Object File",
-                                ("*" OBJECT_EXT ", *" SOURCE_EXT),      /* Concatenate strings */
+                                ("*"),      /* Concatenate strings */
                                 GTK_OBJECT(open_file),
                                 NULL, TRUE);
 
@@ -775,6 +775,7 @@ button_load = push_button("Open", hbox, FALSE, FALSE, 0);
 button_reload = push_button("Reload", hbox, FALSE, FALSE, 0);
 gtk_signal_connect(GTK_OBJECT(button_reload), "clicked",    /* If reload pressed, load */
                     GTK_SIGNAL_FUNC(callback_button_reload_file), NULL);
+gtk_tooltips_set_tip(view_tooltips, button_reload, "Reload previous file", NULL);
 
 separator = gtk_vseparator_new();
 gtk_widget_show(separator);
@@ -854,7 +855,7 @@ gtk_signal_connect_after(GTK_OBJECT(view_binary_load_address), "changed",
 //                                centry_compile);
 
 fileselection = filebar_browser("Select Source/Object File",
-                                ("*" OBJECT_EXT ", *" SOURCE_EXT),      /* Concatenate strings */
+                                ("*"),      /* Concatenate strings */
                                 GTK_OBJECT(button_load),
                                 centry_load, FALSE);
 
@@ -1690,7 +1691,7 @@ hbox = new_box(TRUE, 0, HORIZONTAL);
 gtk_box_pack_start(GTK_BOX(hbox1), hbox, FALSE, TRUE, 0);
 
 
-button_multi = create_ctrl_push_button("Walk",
+button_multi = create_ctrl_push_button("Timed walk",
                                         GTK_SIGNAL_FUNC(callback_button_walk),
                                        (gpointer) &view_step_number, GDK_F9,
                                        "Repeatedly take a number of steps [F9]",
