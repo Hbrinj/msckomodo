@@ -37,8 +37,6 @@
 #include "view.h"
 #include "chump.h"
 
-#include "Pixmaps/blank.xpm"
-
 #define LOAD_BUFFER_LENGTH 80 /* Batch size for bytes in ELF (or binary) load */
 #define MAX_OBJECT_LENGTH  16  /* Max number of bytes accepted in object code */
 

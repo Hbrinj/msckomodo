@@ -31,7 +31,6 @@
 #include "Pixmaps/stop.xpm"
 #include "Pixmaps/refresh.xpm"
 #include "Pixmaps/breakpoint.xpm"
-#include "Pixmaps/blank.xpm"
 #include "Pixmaps/tick.xpm"
 #include "Pixmaps/mulogo.xpm"
 #include "Pixmaps/chump.xpm"
