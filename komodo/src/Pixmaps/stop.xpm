@@ -2,7 +2,7 @@
 static char *stop_xpm[] = {
 /* columns rows colors chars-per-pixel */
 "16 16 2 1 ",
-"  c black",
+"  c #ED1F24",
 ". c None",
 /* pixels */
 "................",
