@@ -3419,6 +3419,7 @@ void update_memvis_image()
 
     do{
         if(src->nodata) continue;
+        if(strncmp(src->text, "NOP", 3) == 0) continue;
         x = (src->address/4); 
         i = x % MEMVIS_DRAWABLE_WIDTH;
         j = x / MEMVIS_DRAWABLE_HEIGHT;
