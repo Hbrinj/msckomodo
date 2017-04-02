@@ -257,7 +257,7 @@ GtkWidget *view_binary_load_address;  /* the address of a binary being loaded */
 GtkWidget *view_memvis_window;               /*The memory visualisation window*/
 GtkWidget *text_in_terminal[TERMINAL_UPPER_BOUND];
 GtkWidget *terminal_active_flag[TERMINAL_UPPER_BOUND];
-
+GtkWidget *view_invalid_file;
 GtkWidget *centry_load;                 /* the current file entry for loading */
 
 

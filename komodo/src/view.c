@@ -126,6 +126,7 @@ GtkWidget *entry_box(GtkWidget*, int, int, callback_button_go_fn);
 
 /* Memvis funcs */
 GtkWidget *view_create_memvis(void);
+GtkWidget *view_create_invalid_file_popup(GtkWindow *parent);
 
 /* Global variables for this file only */
 GtkWidget *view_maincontainer;   /* the actual container within the(?) window */
@@ -233,6 +234,7 @@ filebar        = view_create_filebar();
 prog_ctrl      = view_create_prog_ctrl();
 menubar        = view_create_menubar();           /* Depends on the foregoing */
 status_bar     = view_create_status_bar();
+view_invalid_file = view_create_invalid_file_popup(view_mainwindow);
 
 top_strip = new_box(FALSE, 3, HORIZONTAL); /* Make a strip for menu & buttons */
 gtk_container_set_border_width(GTK_CONTAINER(top_strip), 3);
@@ -3377,6 +3379,34 @@ GtkWidget *view_create_memvis()
     return window;
 }
 
+GtkWidget *view_create_invalid_file_popup(GtkWindow *parent)
+{
+    GtkWidget *vbox;
+    GtkWidget *close_button;
+    GtkWidget *label;
+
+    GtkWidget *window = gtk_window_new(GTK_WINDOW_TOPLEVEL);
+    gtk_widget_set_name(window, "invalidfile");
+    gtk_object_set_data(GTK_OBJECT(window), "invalidfile", window);
+    gtk_window_set_title(GTK_OBJECT(window), "Invalid file");
+    gtk_window_set_modal(window, TRUE);
+    gtk_window_set_transient_for(GTK_WINDOW(window), GTK_WINDOW(parent));
+    gtk_widget_ref(window);
+    gtk_window_set_policy(GTK_WINDOW(window), FALSE, FALSE, FALSE);
+    
+    vbox = new_box(FALSE, 0, VERTICAL);
+    
+    label = gtk_label_new("KoMoDo only accepts *.s or *.kmd files");
+    gtk_widget_show(label);
+    gtk_box_pack_start(GTK_BOX(vbox), label, FALSE, FALSE, 0);
+
+    close_button = push_button("Close", vbox, TRUE, TRUE, 0);
+    gtk_signal_connect_object(GTK_OBJECT(close_button), "clicked",
+                              GTK_SIGNAL_FUNC(gtk_widget_hide),
+                              GTK_OBJECT(window));
+    gtk_container_add(GTK_CONTAINER(window), vbox);
+    return window;
+}
 
 /*                                end of view.c                               */
 /*============================================================================*/

@@ -909,20 +909,31 @@ return;
 
 void load_source(const char* file) {
     char *pTemp1, *pTemp2;
+    int kmd, source;
     int i;
     if(file[0] == '\0') return;
     for (i=strlen(file); (i>0) && (file[i]!='/') && (file[i]!='.'); i--);
     
-    if(strncmp(&file[i], OBJECT_EXT, 4) != 0) {
+    kmd = strncmp(&file[i], OBJECT_EXT, 4);
+    source = strncmp(&file[i], SOURCE_EXT, 2);
+    // check its the right file type
+    if(kmd != 0 && source != 0) {
+        gtk_widget_show(view_invalid_file);
+        return;
+    }
+    // compile if not kmd file type
+    if(kmd != 0) {
         compile_file(file);
     }
-
+    
     pTemp1 = g_strdup(file);
     if (pTemp1[i] == '.') pTemp1[i] = '\0';/* Trim off any ".*" extension */
 
     pTemp2 = g_strconcat(pTemp1, OBJECT_EXT, NULL);		// @@@ re-extend properly @@@i
 
     load_data(pTemp2, FILE_UNKNOWN, NULL);
+    g_free(pTemp1);
+    g_free(pTemp2);
 }
 
 
@@ -944,7 +955,7 @@ void callback_button_open_file(GtkButton *button, gpointer entry)
 
     text = gtk_file_selection_get_filename(GTK_FILE_SELECTION
                                       (GTK_WIDGET(button)->parent->parent->parent));
-    source_filename = text;
+    source_filename = g_strdup(text);
     load_source(text);
 }
 
