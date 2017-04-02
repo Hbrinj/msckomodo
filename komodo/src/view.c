@@ -601,19 +601,20 @@ features = create_submenu_entry2(special_submenu, "Features",
 actions_submenu = gtk_menu_new();                          /* actions submenu */
 
 run   = create_submenu_entry(actions_submenu,
-                               "Run                                    F5",
+                               "Run                                     F4",
                 GTK_SIGNAL_FUNC(callback_button_start), (gpointer) &zero);
 stop  = create_submenu_entry(actions_submenu,
-                               "Pause                                   F6",
+                               "Pause                                   F5",
                 GTK_SIGNAL_FUNC(callback_button_pause), NULL);
-reset = create_submenu_entry(actions_submenu, "Stop",
+reset = create_submenu_entry(actions_submenu, 
+                               "Stop                                    F6",
                 GTK_SIGNAL_FUNC(callback_button_stop), NULL);
 separator = view_separator(GTK_MENU(actions_submenu));
 ping  = create_submenu_entry(actions_submenu, "Ping",
                 GTK_SIGNAL_FUNC(callback_button_ping), NULL);
 separator = view_separator(GTK_MENU(actions_submenu));
 single_step = create_submenu_entry(actions_submenu,
-                               "Single-Step                       F7",
+                               "Single-Step                             F7",
                 GTK_SIGNAL_FUNC(callback_button_start), (gpointer) &one);
 
 
@@ -1614,14 +1615,14 @@ gtk_box_pack_start(GTK_BOX(hbox1), vbox, FALSE, FALSE, 0);
 
 button_start = create_picture_push_button(view_play_pixmap, view_play_bitmap,
                                        GTK_SIGNAL_FUNC(callback_button_start),
-                                      (gpointer) &zero, GDK_F5,
-                                      "Start execution [F5]",
+                                      (gpointer) &zero, GDK_F4,
+                                      "Start execution [F4]",
                                       hbox);
 
 button_stop  = create_picture_push_button(view_pause_pixmap, view_pause_bitmap,
                                         GTK_SIGNAL_FUNC(callback_button_pause),
-                                        NULL, GDK_F6,
-                                       "Pause execution [F6]",
+                                        NULL, GDK_F5,
+                                       "Pause execution [F5]",
                                        hbox);
 
 //button_multi = create_ctrl_push_button("Continue",
@@ -1634,8 +1635,8 @@ button_stop  = create_picture_push_button(view_pause_pixmap, view_pause_bitmap,
 
 button_start = create_picture_push_button(view_stop_pixmap, view_stop_bitmap,
                                         GTK_SIGNAL_FUNC(callback_button_stop),
-                                        NULL, 0,
-                                       "Stop and reset client",
+                                        NULL, GDK_F6,
+                                       "Stop and reset client [F6]",
                                        hbox);
 
 cbutton_proc = gtk_toggle_button_new();
@@ -1674,7 +1675,7 @@ button_single= create_ctrl_push_button("Single-Step",
                                        hbox);
 
 
-hbox = new_box(TRUE, 2, HORIZONTAL);
+hbox = new_box(TRUE, 0, HORIZONTAL);
 gtk_box_pack_start(GTK_BOX(hbox1), hbox, FALSE, FALSE, 0);
 
 button_multi = create_ctrl_push_button("Multi-Step",
@@ -1702,7 +1703,11 @@ create_ctrl_spin_button(1000, 1, 10000, &view_step_freq,
                        "Remember to press return after entering a new value",
                        hbox);
 
-hbox = new_box(TRUE, 4, HORIZONTAL);
+
+hbox = new_box(FALSE, 0, HORIZONTAL);
+separator = gtk_vseparator_new();
+gtk_widget_show(separator);
+gtk_box_pack_start(GTK_BOX(hbox), separator, FALSE, FALSE, 0);
 gtk_box_pack_start(GTK_BOX(hbox1), hbox, FALSE, FALSE, 0);
 
 cbutton_break = create_ctrl_toggle_button("Breakpoints",
