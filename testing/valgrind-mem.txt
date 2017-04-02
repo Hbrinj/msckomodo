@@ -1,0 +1,244 @@
+==12392== Memcheck, a memory error detector
+==12392== Copyright (C) 2002-2015, and GNU GPL'd, by Julian Seward et al.
+==12392== Using Valgrind-3.12.0 and LibVEX; rerun with -h for copyright info
+==12392== Command: kmd -e
+==12392== Parent PID: 31946
+==12392== 
+==12392== Syscall param getcwd(buf) points to unaddressable byte(s)
+==12392==    at 0x617FD52: getcwd (in /usr/lib/libc-2.25.so)
+==12392==    by 0x60E1DAA: realpath@@GLIBC_2.3 (in /usr/lib/libc-2.25.so)
+==12392==    by 0x4086D4: main (interface.c:1047)
+==12392==  Address 0x6e80108 is 0 bytes after a block of size 200 alloc'd
+==12392==    at 0x4C2AF1F: malloc (in /usr/lib/valgrind/vgpreload_memcheck-amd64-linux.so)
+==12392==    by 0x408658: main (interface.c:1036)
+==12392== 
+==12392== Conditional jump or move depends on uninitialised value(s)
+==12392==    at 0x422FE7: add_memory_entries_to_clist.18097 (viewfuncs.c:477)
+==12392==    by 0x4223DE: view_updatememwindow (viewfuncs.c:596)
+==12392==    by 0x40CB70: callback_memory_refresh (callbacks.c:1470)
+==12392==    by 0x40A23D: load_data (callbacks.c:259)
+==12392==    by 0x40BAD4: load_source (callbacks.c:925)
+==12392==    by 0x40BB59: callback_button_open_file (callbacks.c:948)
+==12392==    by 0x4F12F3F: ??? (in /usr/lib/libgtk-1.2.so.0.9.1)
+==12392==    by 0x4F1347A: ??? (in /usr/lib/libgtk-1.2.so.0.9.1)
+==12392==    by 0x4F14074: gtk_signal_emit (in /usr/lib/libgtk-1.2.so.0.9.1)
+==12392==    by 0x4E78B27: ??? (in /usr/lib/libgtk-1.2.so.0.9.1)
+==12392==    by 0x4F131B2: ??? (in /usr/lib/libgtk-1.2.so.0.9.1)
+==12392==    by 0x4F14074: gtk_signal_emit (in /usr/lib/libgtk-1.2.so.0.9.1)
+==12392== 
+==12392== Conditional jump or move depends on uninitialised value(s)
+==12392==    at 0x422FE7: add_memory_entries_to_clist.18097 (viewfuncs.c:477)
+==12392==    by 0x4223DE: view_updatememwindow (viewfuncs.c:596)
+==12392==    by 0x40CB70: callback_memory_refresh (callbacks.c:1470)
+==12392==    by 0x40EDC0: callback_memwindow_clist (callbacks.c:2589)
+==12392==    by 0x4F12F3F: ??? (in /usr/lib/libgtk-1.2.so.0.9.1)
+==12392==    by 0x4F1347A: ??? (in /usr/lib/libgtk-1.2.so.0.9.1)
+==12392==    by 0x4F14074: gtk_signal_emit (in /usr/lib/libgtk-1.2.so.0.9.1)
+==12392==    by 0x4E8F0F6: ??? (in /usr/lib/libgtk-1.2.so.0.9.1)
+==12392==    by 0x4EE16BD: gtk_marshal_INT__POINTER (in /usr/lib/libgtk-1.2.so.0.9.1)
+==12392==    by 0x4F132D2: ??? (in /usr/lib/libgtk-1.2.so.0.9.1)
+==12392==    by 0x4F14074: gtk_signal_emit (in /usr/lib/libgtk-1.2.so.0.9.1)
+==12392==    by 0x4F53FCC: gtk_widget_event (in /usr/lib/libgtk-1.2.so.0.9.1)
+==12392== 
+==12392== Conditional jump or move depends on uninitialised value(s)
+==12392==    at 0x422FE7: add_memory_entries_to_clist.18097 (viewfuncs.c:477)
+==12392==    by 0x4223DE: view_updatememwindow (viewfuncs.c:596)
+==12392==    by 0x40CB70: callback_memory_refresh (callbacks.c:1470)
+==12392==    by 0x40CAD8: callback_refresh_selection (callbacks.c:1440)
+==12392==    by 0x40CB20: callback_global_refresh (callbacks.c:1452)
+==12392==    by 0x40756A: board_enq (interface.c:554)
+==12392==    by 0x409B00: run_board (interface.c:1714)
+==12392==    by 0x40C65C: callback_button_start (callbacks.c:1233)
+==12392==    by 0x4F12F3F: ??? (in /usr/lib/libgtk-1.2.so.0.9.1)
+==12392==    by 0x4F1347A: ??? (in /usr/lib/libgtk-1.2.so.0.9.1)
+==12392==    by 0x4F14074: gtk_signal_emit (in /usr/lib/libgtk-1.2.so.0.9.1)
+==12392==    by 0x4E78B27: ??? (in /usr/lib/libgtk-1.2.so.0.9.1)
+==12392== 
+==12392== Invalid read of size 4
+==12392==    at 0x51DCDC4: ??? (in /usr/lib/libgdk-1.2.so.0.9.1)
+==12392==    by 0x51DF22C: gdk_input_exit (in /usr/lib/libgdk-1.2.so.0.9.1)
+==12392==    by 0x51CA1F7: ??? (in /usr/lib/libgdk-1.2.so.0.9.1)
+==12392==    by 0x60D76BF: __run_exit_handlers (in /usr/lib/libc-2.25.so)
+==12392==    by 0x60D7719: exit (in /usr/lib/libc-2.25.so)
+==12392==    by 0x40FF06: callback_main_quit (callbacks.c:3233)
+==12392==    by 0x4F12F3F: ??? (in /usr/lib/libgtk-1.2.so.0.9.1)
+==12392==    by 0x4F1347A: ??? (in /usr/lib/libgtk-1.2.so.0.9.1)
+==12392==    by 0x4F14074: gtk_signal_emit (in /usr/lib/libgtk-1.2.so.0.9.1)
+==12392==    by 0x4F4EF6D: gtk_widget_activate (in /usr/lib/libgtk-1.2.so.0.9.1)
+==12392==    by 0x4EEAB1E: gtk_menu_shell_activate_item (in /usr/lib/libgtk-1.2.so.0.9.1)
+==12392==    by 0x4EEAE8C: ??? (in /usr/lib/libgtk-1.2.so.0.9.1)
+==12392==  Address 0x6e9c180 is 0 bytes inside a block of size 144 free'd
+==12392==    at 0x4C2C14B: free (in /usr/lib/valgrind/vgpreload_memcheck-amd64-linux.so)
+==12392==    by 0x51DF258: gdk_input_exit (in /usr/lib/libgdk-1.2.so.0.9.1)
+==12392==    by 0x51CA1F7: ??? (in /usr/lib/libgdk-1.2.so.0.9.1)
+==12392==    by 0x60D76BF: __run_exit_handlers (in /usr/lib/libc-2.25.so)
+==12392==    by 0x60D7719: exit (in /usr/lib/libc-2.25.so)
+==12392==    by 0x40FF06: callback_main_quit (callbacks.c:3233)
+==12392==    by 0x4F12F3F: ??? (in /usr/lib/libgtk-1.2.so.0.9.1)
+==12392==    by 0x4F1347A: ??? (in /usr/lib/libgtk-1.2.so.0.9.1)
+==12392==    by 0x4F14074: gtk_signal_emit (in /usr/lib/libgtk-1.2.so.0.9.1)
+==12392==    by 0x4F4EF6D: gtk_widget_activate (in /usr/lib/libgtk-1.2.so.0.9.1)
+==12392==    by 0x4EEAB1E: gtk_menu_shell_activate_item (in /usr/lib/libgtk-1.2.so.0.9.1)
+==12392==    by 0x4EEAE8C: ??? (in /usr/lib/libgtk-1.2.so.0.9.1)
+==12392==  Block was alloc'd at
+==12392==    at 0x4C2AF1F: malloc (in /usr/lib/valgrind/vgpreload_memcheck-amd64-linux.so)
+==12392==    by 0x5E87074: g_malloc (in /usr/lib/libglib-1.2.so.0.0.10)
+==12392==    by 0x51DE819: gdk_input_init (in /usr/lib/libgdk-1.2.so.0.9.1)
+==12392==    by 0x51C959C: gdk_init_check (in /usr/lib/libgdk-1.2.so.0.9.1)
+==12392==    by 0x4EDFB38: gtk_init_check (in /usr/lib/libgtk-1.2.so.0.9.1)
+==12392==    by 0x4EE0078: gtk_init (in /usr/lib/libgtk-1.2.so.0.9.1)
+==12392==    by 0x40891F: main (interface.c:1097)
+==12392== 
+==12392== 
+==12392== HEAP SUMMARY:
+==12392==     in use at exit: 2,045,415 bytes in 15,589 blocks
+==12392==   total heap usage: 66,374 allocs, 50,785 frees, 4,734,239 bytes allocated
+==12392== 
+==12392== 21 bytes in 1 blocks are definitely lost in loss record 1,371 of 2,987
+==12392==    at 0x4C2AF1F: malloc (in /usr/lib/valgrind/vgpreload_memcheck-amd64-linux.so)
+==12392==    by 0x5E87074: g_malloc (in /usr/lib/libglib-1.2.so.0.0.10)
+==12392==    by 0x5E90196: g_strdup (in /usr/lib/libglib-1.2.so.0.0.10)
+==12392==    by 0x40BA77: load_source (callbacks.c:920)
+==12392==    by 0x40BB59: callback_button_open_file (callbacks.c:948)
+==12392==    by 0x4F12F3F: ??? (in /usr/lib/libgtk-1.2.so.0.9.1)
+==12392==    by 0x4F1347A: ??? (in /usr/lib/libgtk-1.2.so.0.9.1)
+==12392==    by 0x4F14074: gtk_signal_emit (in /usr/lib/libgtk-1.2.so.0.9.1)
+==12392==    by 0x4E78B27: ??? (in /usr/lib/libgtk-1.2.so.0.9.1)
+==12392==    by 0x4F131B2: ??? (in /usr/lib/libgtk-1.2.so.0.9.1)
+==12392==    by 0x4F14074: gtk_signal_emit (in /usr/lib/libgtk-1.2.so.0.9.1)
+==12392==    by 0x4E7895B: ??? (in /usr/lib/libgtk-1.2.so.0.9.1)
+==12392== 
+==12392== 23 bytes in 1 blocks are definitely lost in loss record 1,393 of 2,987
+==12392==    at 0x4C2AF1F: malloc (in /usr/lib/valgrind/vgpreload_memcheck-amd64-linux.so)
+==12392==    by 0x5E87074: g_malloc (in /usr/lib/libglib-1.2.so.0.0.10)
+==12392==    by 0x5E9030C: g_strconcat (in /usr/lib/libglib-1.2.so.0.0.10)
+==12392==    by 0x40BABA: load_source (callbacks.c:923)
+==12392==    by 0x40BB59: callback_button_open_file (callbacks.c:948)
+==12392==    by 0x4F12F3F: ??? (in /usr/lib/libgtk-1.2.so.0.9.1)
+==12392==    by 0x4F1347A: ??? (in /usr/lib/libgtk-1.2.so.0.9.1)
+==12392==    by 0x4F14074: gtk_signal_emit (in /usr/lib/libgtk-1.2.so.0.9.1)
+==12392==    by 0x4E78B27: ??? (in /usr/lib/libgtk-1.2.so.0.9.1)
+==12392==    by 0x4F131B2: ??? (in /usr/lib/libgtk-1.2.so.0.9.1)
+==12392==    by 0x4F14074: gtk_signal_emit (in /usr/lib/libgtk-1.2.so.0.9.1)
+==12392==    by 0x4E7895B: ??? (in /usr/lib/libgtk-1.2.so.0.9.1)
+==12392== 
+==12392== 64 bytes in 2 blocks are definitely lost in loss record 2,034 of 2,987
+==12392==    at 0x4C2AF1F: malloc (in /usr/lib/valgrind/vgpreload_memcheck-amd64-linux.so)
+==12392==    by 0x54046A8: XOpenDevice (in /usr/lib/libXi.so.6.1.0)
+==12392==    by 0x51DEAC8: gdk_input_init (in /usr/lib/libgdk-1.2.so.0.9.1)
+==12392==    by 0x51C959C: gdk_init_check (in /usr/lib/libgdk-1.2.so.0.9.1)
+==12392==    by 0x4EDFB38: gtk_init_check (in /usr/lib/libgtk-1.2.so.0.9.1)
+==12392==    by 0x4EE0078: gtk_init (in /usr/lib/libgtk-1.2.so.0.9.1)
+==12392==    by 0x40891F: main (interface.c:1097)
+==12392== 
+==12392== 120 bytes in 1 blocks are definitely lost in loss record 2,294 of 2,987
+==12392==    at 0x4C2CF35: calloc (in /usr/lib/valgrind/vgpreload_memcheck-amd64-linux.so)
+==12392==    by 0x5E870D9: g_malloc0 (in /usr/lib/libglib-1.2.so.0.0.10)
+==12392==    by 0x4F418FF: gtk_type_new (in /usr/lib/libgtk-1.2.so.0.9.1)
+==12392==    by 0x4F43785: gtk_vbox_new (in /usr/lib/libgtk-1.2.so.0.9.1)
+==12392==    by 0x41A62D: new_box (view.c:3251)
+==12392==    by 0x414B98: view_create_splashwindow (view.c:1308)
+==12392==    by 0x408929: main (interface.c:1099)
+==12392== 
+==12392== 120 bytes in 1 blocks are definitely lost in loss record 2,295 of 2,987
+==12392==    at 0x4C2CF35: calloc (in /usr/lib/valgrind/vgpreload_memcheck-amd64-linux.so)
+==12392==    by 0x5E870D9: g_malloc0 (in /usr/lib/libglib-1.2.so.0.0.10)
+==12392==    by 0x4F418FF: gtk_type_new (in /usr/lib/libgtk-1.2.so.0.9.1)
+==12392==    by 0x4F43785: gtk_vbox_new (in /usr/lib/libgtk-1.2.so.0.9.1)
+==12392==    by 0x41A62D: new_box (view.c:3251)
+==12392==    by 0x41568B: view_create_prog_ctrl (view.c:1576)
+==12392==    by 0x410DB2: view_create_mainwindow (view.c:233)
+==12392==    by 0x409683: start_gtk.20766 (interface.c:1459)
+==12392==    by 0x4092DE: setup (interface.c:1520)
+==12392==    by 0x408A3A: main (interface.c:1111)
+==12392== 
+==12392== 120 bytes in 1 blocks are definitely lost in loss record 2,296 of 2,987
+==12392==    at 0x4C2CF35: calloc (in /usr/lib/valgrind/vgpreload_memcheck-amd64-linux.so)
+==12392==    by 0x5E870D9: g_malloc0 (in /usr/lib/libglib-1.2.so.0.0.10)
+==12392==    by 0x4F418FF: gtk_type_new (in /usr/lib/libgtk-1.2.so.0.9.1)
+==12392==    by 0x4EC9775: gtk_hbox_new (in /usr/lib/libgtk-1.2.so.0.9.1)
+==12392==    by 0x41A618: new_box (view.c:3250)
+==12392==    by 0x4162CA: create_picture_push_button.18735 (view.c:1509)
+==12392==    by 0x415926: view_create_prog_ctrl (view.c:1613)
+==12392==    by 0x410DB2: view_create_mainwindow (view.c:233)
+==12392==    by 0x409683: start_gtk.20766 (interface.c:1459)
+==12392==    by 0x4092DE: setup (interface.c:1520)
+==12392==    by 0x408A3A: main (interface.c:1111)
+==12392== 
+==12392== 120 bytes in 1 blocks are definitely lost in loss record 2,297 of 2,987
+==12392==    at 0x4C2CF35: calloc (in /usr/lib/valgrind/vgpreload_memcheck-amd64-linux.so)
+==12392==    by 0x5E870D9: g_malloc0 (in /usr/lib/libglib-1.2.so.0.0.10)
+==12392==    by 0x4F418FF: gtk_type_new (in /usr/lib/libgtk-1.2.so.0.9.1)
+==12392==    by 0x4EC9775: gtk_hbox_new (in /usr/lib/libgtk-1.2.so.0.9.1)
+==12392==    by 0x41A618: new_box (view.c:3250)
+==12392==    by 0x4162CA: create_picture_push_button.18735 (view.c:1509)
+==12392==    by 0x41596B: view_create_prog_ctrl (view.c:1619)
+==12392==    by 0x410DB2: view_create_mainwindow (view.c:233)
+==12392==    by 0x409683: start_gtk.20766 (interface.c:1459)
+==12392==    by 0x4092DE: setup (interface.c:1520)
+==12392==    by 0x408A3A: main (interface.c:1111)
+==12392== 
+==12392== 120 bytes in 1 blocks are definitely lost in loss record 2,298 of 2,987
+==12392==    at 0x4C2CF35: calloc (in /usr/lib/valgrind/vgpreload_memcheck-amd64-linux.so)
+==12392==    by 0x5E870D9: g_malloc0 (in /usr/lib/libglib-1.2.so.0.0.10)
+==12392==    by 0x4F418FF: gtk_type_new (in /usr/lib/libgtk-1.2.so.0.9.1)
+==12392==    by 0x4EC9775: gtk_hbox_new (in /usr/lib/libgtk-1.2.so.0.9.1)
+==12392==    by 0x41A618: new_box (view.c:3250)
+==12392==    by 0x4162CA: create_picture_push_button.18735 (view.c:1509)
+==12392==    by 0x4159B0: view_create_prog_ctrl (view.c:1633)
+==12392==    by 0x410DB2: view_create_mainwindow (view.c:233)
+==12392==    by 0x409683: start_gtk.20766 (interface.c:1459)
+==12392==    by 0x4092DE: setup (interface.c:1520)
+==12392==    by 0x408A3A: main (interface.c:1111)
+==12392== 
+==12392== 128 bytes in 1 blocks are definitely lost in loss record 2,320 of 2,987
+==12392==    at 0x4C2CF35: calloc (in /usr/lib/valgrind/vgpreload_memcheck-amd64-linux.so)
+==12392==    by 0x5E870D9: g_malloc0 (in /usr/lib/libglib-1.2.so.0.0.10)
+==12392==    by 0x4F418FF: gtk_type_new (in /usr/lib/libgtk-1.2.so.0.9.1)
+==12392==    by 0x4EFE18A: gtk_pixmap_new (in /usr/lib/libgtk-1.2.so.0.9.1)
+==12392==    by 0x414BDC: view_create_splashwindow (view.c:1311)
+==12392==    by 0x408929: main (interface.c:1099)
+==12392== 
+==12392== 137 (136 direct, 1 indirect) bytes in 1 blocks are definitely lost in loss record 2,349 of 2,987
+==12392==    at 0x4C2CF35: calloc (in /usr/lib/valgrind/vgpreload_memcheck-amd64-linux.so)
+==12392==    by 0x5E870D9: g_malloc0 (in /usr/lib/libglib-1.2.so.0.0.10)
+==12392==    by 0x4F418FF: gtk_type_new (in /usr/lib/libgtk-1.2.so.0.9.1)
+==12392==    by 0x4EC4F04: gtk_frame_new (in /usr/lib/libgtk-1.2.so.0.9.1)
+==12392==    by 0x414C45: view_create_splashwindow (view.c:1321)
+==12392==    by 0x408929: main (interface.c:1099)
+==12392== 
+==12392== 11,200 bytes in 1 blocks are possibly lost in loss record 2,965 of 2,987
+==12392==    at 0x4C2CF35: calloc (in /usr/lib/valgrind/vgpreload_memcheck-amd64-linux.so)
+==12392==    by 0x5E870D9: g_malloc0 (in /usr/lib/libglib-1.2.so.0.0.10)
+==12392==    by 0x4F123A5: ??? (in /usr/lib/libgtk-1.2.so.0.9.1)
+==12392==    by 0x4F14B0B: gtk_signal_connect (in /usr/lib/libgtk-1.2.so.0.9.1)
+==12392==    by 0x410D18: view_create_mainwindow (view.c:223)
+==12392==    by 0x409683: start_gtk.20766 (interface.c:1459)
+==12392==    by 0x4092DE: setup (interface.c:1520)
+==12392==    by 0x408A3A: main (interface.c:1111)
+==12392== 
+==12392== 11,200 bytes in 1 blocks are possibly lost in loss record 2,966 of 2,987
+==12392==    at 0x4C2CF35: calloc (in /usr/lib/valgrind/vgpreload_memcheck-amd64-linux.so)
+==12392==    by 0x5E870D9: g_malloc0 (in /usr/lib/libglib-1.2.so.0.0.10)
+==12392==    by 0x4F123A5: ??? (in /usr/lib/libgtk-1.2.so.0.9.1)
+==12392==    by 0x4F14F8C: gtk_signal_connect_object_after (in /usr/lib/libgtk-1.2.so.0.9.1)
+==12392==    by 0x4EE8775: gtk_menu_item_new_with_label (in /usr/lib/libgtk-1.2.so.0.9.1)
+==12392==    by 0x41A8B1: create_submenu_entry (view.c:3327)
+==12392==    by 0x41146E: view_create_menubar (view.c:486)
+==12392==    by 0x410DBB: view_create_mainwindow (view.c:234)
+==12392==    by 0x409683: start_gtk.20766 (interface.c:1459)
+==12392==    by 0x4092DE: setup (interface.c:1520)
+==12392==    by 0x408A3A: main (interface.c:1111)
+==12392== 
+==12392== LEAK SUMMARY:
+==12392==    definitely lost: 972 bytes in 11 blocks
+==12392==    indirectly lost: 1 bytes in 1 blocks
+==12392==      possibly lost: 22,400 bytes in 2 blocks
+==12392==    still reachable: 2,022,042 bytes in 15,575 blocks
+==12392==         suppressed: 0 bytes in 0 blocks
+==12392== Reachable blocks (those to which a pointer was found) are not shown.
+==12392== To see them, rerun with: --leak-check=full --show-leak-kinds=all
+==12392== 
+==12392== For counts of detected and suppressed errors, rerun with: -v
+==12392== Use --track-origins=yes to see where uninitialised values come from
+==12392== ERROR SUMMARY: 20 errors from 17 contexts (suppressed: 0 from 0)
