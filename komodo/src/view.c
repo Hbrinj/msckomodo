@@ -3376,6 +3376,9 @@ GtkWidget *view_create_memvis()
                               GTK_SIGNAL_FUNC(gtk_widget_hide),
                               GTK_OBJECT(window));
 
+    gtk_signal_connect(window, "delete-event", 
+                              GTK_SIGNAL_FUNC(gtk_widget_hide),
+                              GTK_OBJECT(window));
     scrollwin = gtk_scrolled_window_new(NULL, NULL);
     gtk_widget_show(scrollwin);
     gtk_scrolled_window_add_with_viewport(scrollwin, vbox);
