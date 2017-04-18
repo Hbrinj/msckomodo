@@ -898,6 +898,7 @@ if (compile_lock == FREE)                       /* Check if already compiling */
         g_free(pTemp2);
         }
       g_free(pTemp1);
+      // make sure to wait for compile to finish before returning.
       waitpid(childpid, &status, 0);
       }
     }
@@ -911,26 +912,34 @@ void load_source(const char* file) {
     char *pTemp1, *pTemp2;
     int kmd, source;
     int i;
+
+    // if emopty return
     if(file[0] == '\0') return;
+    // find the '.' to determine the file type
     for (i=strlen(file); (i>0) && (file[i]!='/') && (file[i]!='.'); i--);
     
     kmd = strncmp(&file[i], OBJECT_EXT, 4);
     source = strncmp(&file[i], SOURCE_EXT, 2);
+    
     // check its the right file type
     if(kmd != 0 && source != 0) {
+        // wrong file type show popup and return
         gtk_widget_show(view_invalid_file);
         return;
     }
+
     // compile if not kmd file type
     if(kmd != 0) {
         compile_file(file);
     }
     
+    // get the correct file with the new extension
     pTemp1 = g_strdup(file);
     if (pTemp1[i] == '.') pTemp1[i] = '\0';/* Trim off any ".*" extension */
 
     pTemp2 = g_strconcat(pTemp1, OBJECT_EXT, NULL);		// @@@ re-extend properly @@@i
 
+    // load the file
     load_data(pTemp2, FILE_UNKNOWN, NULL);
     g_free(pTemp1);
     g_free(pTemp2);
@@ -944,25 +953,31 @@ void load_source(const char* file) {
 
 /******************************************************************************/
 /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
-/* Confirms a file choice.                                                    */
+/* Confirms and loads a file                                                  */
 /*                                                                            */
-
 void callback_button_open_file(GtkButton *button, gpointer entry)
 {
     char *text;
 
     if (TRACE > 5) g_print("callback_button_ok_file\n");
-
+    // grab the file the user chose
     text = gtk_file_selection_get_filename(GTK_FILE_SELECTION
                                       (GTK_WIDGET(button)->parent->parent->parent));
+    // save the filename
     source_filename = g_strdup(text);
+
+    // load the filename
     load_source(text);
 }
 
+/**
+ * Reloads a loaded file from the original source 
+ */
 void callback_button_reload_file(GtkButton *button, gpointer entry) {
     if(source_filename == NULL) return;
     load_source(source_filename);
 }
+
 
 void callback_button_ok_file(GtkButton *button, gpointer entry)
 {                                /* on fileentry ok button send to text entry */
@@ -3402,13 +3417,18 @@ else
 return;
 }
 
+/**
+ * Called to update the memory visualisation image when needed
+ */
 void update_memvis_image()
 {
     int i = 0, j =0;
     int x = 0;
+    // grab a copy of the source pointer
     source_line *src = source.pStart;
     if(src == NULL) return;
 
+    // go through an blit the screen so it can be redrawn
     for(i = 0; i < MEMVIS_DRAWABLE_WIDTH; i++)
     {
         for(j = 0; j < MEMVIS_DRAWABLE_HEIGHT; j++)
@@ -3417,14 +3437,18 @@ void update_memvis_image()
         }
     }
 
+    // GO through the source and draw if there is data and it isnt a 'NOP'
     do{
         if(src->nodata) continue;
         if(strncmp(src->text, "NOP", 3) == 0) continue;
+        // Divide by 4 because we deal with 4byte words
         x = (src->address/4); 
+        // modulus gives us the column, dividie gives use the row
         i = x % MEMVIS_DRAWABLE_WIDTH;
         j = x / MEMVIS_DRAWABLE_HEIGHT;
         gdk_image_put_pixel(memvis_image,i,j,0x00FF00);
     }while((src = src->pNext) != NULL);
+    // redraw the image
     gtk_widget_queue_draw(memvis_gtkimage);
 }
 

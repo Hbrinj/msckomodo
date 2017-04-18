@@ -3342,24 +3342,28 @@ return handle;
 /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
 /******************************************************************************/
 
-
+/**
+ * Create the memory visualisation window
+ *
+ */
 GtkWidget *view_create_memvis()
 {
     GtkWidget *vbox;
     GtkWidget *close_button;
     GtkWidget *scrollwin;
    
-    //gtk_widget_hide;
-   //
     // Create the window
     GtkWidget *window = gtk_window_new(GTK_WINDOW_TOPLEVEL);
+    // set its name if we want to retrieve in the future
     gtk_widget_set_name(window, "Memvis");
     gtk_object_set_data(GTK_OBJECT(window), "Memvis", window);
     gtk_window_set_title(GTK_WINDOW(window), "Memory visualisation");
+    // give it a default size
     gtk_window_set_default_size(GTK_WINDOW(window), MEMVIS_WINDOW_HEIGHT, MEMVIS_WINDOW_WIDTH);
     gtk_window_set_policy(GTK_WINDOW(window), TRUE, TRUE, FALSE);
     gtk_widget_ref(window);
 
+    // create a memory image which we can keep a handle to.
     memvis_image = gdk_image_new(GDK_IMAGE_FASTEST,
             gdk_visual_get_system(), MEMVIS_DRAWABLE_HEIGHT, MEMVIS_DRAWABLE_HEIGHT);
 
@@ -3376,9 +3380,11 @@ GtkWidget *view_create_memvis()
                               GTK_SIGNAL_FUNC(gtk_widget_hide),
                               GTK_OBJECT(window));
 
+    // Override the x button so that it doesnt destroy the window
     gtk_signal_connect(window, "delete-event", 
                               GTK_SIGNAL_FUNC(gtk_widget_hide),
                               GTK_OBJECT(window));
+
     scrollwin = gtk_scrolled_window_new(NULL, NULL);
     gtk_widget_show(scrollwin);
     gtk_scrolled_window_add_with_viewport(scrollwin, vbox);
@@ -3387,32 +3393,47 @@ GtkWidget *view_create_memvis()
     return window;
 }
 
+/**
+ * Create a popup window for invalid file type
+ *
+ */
 GtkWidget *view_create_invalid_file_popup(GtkWindow *parent)
 {
     GtkWidget *vbox;
     GtkWidget *close_button;
     GtkWidget *label;
 
+    //Create a toplevel window
     GtkWidget *window = gtk_window_new(GTK_WINDOW_TOPLEVEL);
+    //set the window name so we can retrieve it if needed
     gtk_widget_set_name(window, "invalidfile");
     gtk_object_set_data(GTK_OBJECT(window), "invalidfile", window);
+
+    // set the window title
     gtk_window_set_title(GTK_OBJECT(window), "Invalid file");
+    // set it as a modal window, so its part of another window
     gtk_window_set_modal(window, TRUE);
+    // Set this windows parent so that if this window is active the parent isnt
     gtk_window_set_transient_for(GTK_WINDOW(window), GTK_WINDOW(parent));
     gtk_widget_ref(window);
     gtk_window_set_policy(GTK_WINDOW(window), FALSE, FALSE, FALSE);
     
-    vbox = new_box(FALSE, 0, VERTICAL);
+    // Add content to a new vbox
+    vbox = new_box(FALSE, 4, VERTICAL);
     
+    // the message
     label = gtk_label_new("KoMoDo only accepts *.s or *.kmd files");
     gtk_widget_show(label);
     gtk_box_pack_start(GTK_BOX(vbox), label, FALSE, FALSE, 0);
 
+    // the close button
     close_button = push_button("Close", vbox, TRUE, TRUE, 0);
     gtk_signal_connect_object(GTK_OBJECT(close_button), "clicked",
                               GTK_SIGNAL_FUNC(gtk_widget_hide),
                               GTK_OBJECT(window));
+    // add the vbox to the window
     gtk_container_add(GTK_CONTAINER(window), vbox);
+    
     return window;
 }
 
