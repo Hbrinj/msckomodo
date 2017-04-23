@@ -41,4 +41,4 @@ aasm_LDADD =
 EXTRA_DIST = sample.komodo parse.pl
 
 dotkomodo.string: sample.komodo
-	parse.pl < sample.komodo > dotkomodo.string 
+	./parse.pl < sample.komodo > dotkomodo.string 
