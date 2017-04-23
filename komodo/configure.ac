@@ -2,7 +2,7 @@ dnl Process this file with autoconf to produce a configure script.
 
 AC_INIT(configure.ac)
 AC_CANONICAL_SYSTEM
-AM_INIT_AUTOMAKE(KMD, 1.5.0)
+AM_INIT_AUTOMAKE(KMD, 1.6.0)
 AM_CONFIG_HEADER(config.h) 
 dnl CFLAGS=" -g -O0 $CFLAGS"
 dnl AC_ISC_POSIX
